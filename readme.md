@@ -1,6 +1,6 @@
-# 🌸 LILY BOOK CLUB API
+# LILY BOOK CLUB 🌸
 
-**LILY BOOK CLUB** is a Spring Boot application that powers a community-driven book recommendation platform. Users receive **weekly emails** with book recommendations tailored to their interests and skills, join club groups, vote on books, and manage their membership.
+Interest-Based Book Club Application.
 
 ---
 
@@ -21,7 +21,7 @@ Send weekly emails to users with recommended books based on their interests and 
 ##  Tech Stack
 - **Backend:** Spring Boot
 - **Database:** MySQL
-- **Email Service:** JavaMail / SendGrid
+- **Email Service:**  Gmail Api
 - **Authentication:** Spring Security / JWT
 - **API Documentation:** Swagger UI / Postman
 
