@@ -1,11 +1,6 @@
 # LILY BOOK CLUB 🌸
 
-Interest-Based Book Club API.
-
----
-
-##  Project Definition
-An app where people receive weekly emails on a recommended book to read.
+Interest-Based Book Club API: An app where people receive weekly emails on a recommended book to read.
 Users join by creating an account and joining a club group based on interests.
 Each group receives curated book suggestions, reading reminders, and updates.
 Members can recommend or vote on books, and opt out or leave their group at any time.
