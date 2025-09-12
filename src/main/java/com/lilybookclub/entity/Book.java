@@ -16,21 +16,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Book extends BaseEntity {
     @Column(unique = true)
-    private String bookId;
-    @Column()
+    private String referenceNo;
     private String title;
-    @Column()
     private String author;
-    @Column()
     private String link;
-    @Column()
     private String imageUrl;
-    @Column()
-    private Long addedBy;
-    @Column()
-    private String comment;
-    @Column()
-    private Integer vote;
+    private String description;
 }
 
 

@@ -1,10 +1,14 @@
 package com.lilybookclub.entity;
 
+import com.lilybookclub.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDate;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Data
@@ -13,12 +17,21 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Status status;
+
+    private Boolean deleted;
+
     @CreationTimestamp
-    @Column(name="created_at", updatable = false)
-    private LocalDate createdAt;
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name="updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
 }
 

@@ -1,9 +1,7 @@
 package com.lilybookclub.entity;
 
 import com.lilybookclub.enums.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -17,9 +15,8 @@ public class User extends BaseEntity{
      private String email;
      @Column(nullable = false)
      private String password;
-     @Column()
      private String firstname;
-     @Column()
+     private String lastname;
      private Role role;
 }
 
