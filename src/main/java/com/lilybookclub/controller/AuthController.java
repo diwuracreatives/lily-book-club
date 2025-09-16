@@ -1,9 +1,9 @@
 package com.lilybookclub.controller;
 
-import com.lilybookclub.dto.request.LoginRequest;
-import com.lilybookclub.dto.request.SignUpRequest;
-import com.lilybookclub.dto.response.LoginResponse;
-import com.lilybookclub.dto.response.SignUpResponse;
+import com.lilybookclub.dto.request.user.LoginRequest;
+import com.lilybookclub.dto.request.user.SignUpRequest;
+import com.lilybookclub.dto.response.user.LoginResponse;
+import com.lilybookclub.dto.response.user.SignUpResponse;
 import com.lilybookclub.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

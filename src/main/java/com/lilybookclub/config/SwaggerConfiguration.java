@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 
-public class Swagger {
+public class SwaggerConfiguration {
     @Bean
     public OpenAPI lilyBookClubOpenAPIConfiguration() {
         return new OpenAPI()

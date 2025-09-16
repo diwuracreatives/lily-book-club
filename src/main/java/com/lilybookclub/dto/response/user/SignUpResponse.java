@@ -1,4 +1,4 @@
-package com.lilybookclub.dto.response;
+package com.lilybookclub.dto.response.user;
 
 import lombok.Builder;
 import lombok.Data;

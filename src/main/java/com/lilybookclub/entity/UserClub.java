@@ -1,15 +1,13 @@
 package com.lilybookclub.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "user_club", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@Table(name = "user_clubs", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserClub extends BaseEntity{

@@ -1,18 +1,13 @@
 package com.lilybookclub.entity;
 
-import com.lilybookclub.enums.Category;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "clubs")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Club extends BaseEntity{
@@ -20,5 +15,8 @@ public class Club extends BaseEntity{
     private String code;
     private String name;
     private Integer readingDay;
-    private Category category;
+
+    @OneToOne
+    @JoinColumn(name="category_id", nullable = false)
+    private ClubCategory category;
 }

@@ -1,4 +1,4 @@
-package com.lilybookclub.util;
+package com.lilybookclub.config;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
