@@ -31,10 +31,10 @@ Members can recommend or vote on books, and opt out or leave their group at any 
 git clone https://github.com/diwuracreatives/lily-book-club.git
 cd lily-book-club
 ```
-2. **Configure environment variables**
+1. **Configure environment variables**
 Edit Application.properties file
 
-3. **Build and Run the App**
+2. **Build and Run the App**
 ```bash
 spring-boot:run
 ```
