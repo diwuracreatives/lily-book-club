@@ -6,8 +6,10 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 
-public class Swagger {
+
+public class SwaggerConfiguration {
     @Bean
     public OpenAPI lilyBookClubOpenAPIConfiguration() {
         return new OpenAPI()
@@ -15,14 +17,12 @@ public class Swagger {
                 .title("LilyBookClub🌸")
                 .description("LilyBookClub API")
                 .version("1.0"))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-                .components(new Components().addSecuritySchemes("Bearer Authentication", new SecurityScheme()
-                        .name("Authorization")
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")
-                ));
-
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme()
+                 .name(HttpHeaders.AUTHORIZATION)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                 .bearerFormat("JWT")));
 
     }
 }

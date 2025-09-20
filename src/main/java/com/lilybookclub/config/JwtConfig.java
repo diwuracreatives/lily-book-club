@@ -1,4 +1,4 @@
-package com.lilybookclub.util;
+package com.lilybookclub.config;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 public class JwtConfig {
     private String secretKey;
     private int expiryDuration;
-
-    public String getAuthorizationHeader() {
-        return HttpHeaders.AUTHORIZATION;
-    }
+    private String AuthorizationHeader = HttpHeaders.AUTHORIZATION;
 }
+

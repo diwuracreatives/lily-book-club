@@ -1,4 +1,4 @@
-package com.lilybookclub.advice;
+package com.lilybookclub.config;
 
 import com.lilybookclub.security.jwt.CustomAuditorAware;
 import org.springframework.context.annotation.Bean;
