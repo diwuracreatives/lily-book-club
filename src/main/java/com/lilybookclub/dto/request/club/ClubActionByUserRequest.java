@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClubActionByUserRequest {
-    @NotBlank(message = "Club code is required")
-    private String clubCode;
+    @NotBlank(message = "Club category is required")
+    private String category;
 }

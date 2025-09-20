@@ -1,5 +1,7 @@
 package com.lilybookclub.entity;
 
+import com.lilybookclub.enums.Category;
+import com.lilybookclub.enums.DayOfTheWeek;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,12 +13,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Club extends BaseEntity{
-    @Column(unique = true, nullable = false)
-    private String code;
     private String name;
-    private Integer readingDay;
+    @Enumerated(EnumType.STRING)
+    private DayOfTheWeek readingDay;
+    @Enumerated(EnumType.STRING)
+    private Category category;
+    private String description;
 
-    @OneToOne
-    @JoinColumn(name="category_id", nullable = false)
-    private ClubCategory category;
 }
+

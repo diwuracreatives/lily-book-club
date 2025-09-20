@@ -5,32 +5,34 @@ import com.lilybookclub.dto.request.user.SignUpRequest;
 import com.lilybookclub.dto.response.user.LoginResponse;
 import com.lilybookclub.dto.response.user.SignUpResponse;
 import com.lilybookclub.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RequestMapping("/api/v1/auth")
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoints for registering and log in")
 public class AuthController {
 
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest){
-        SignUpResponse userModel = authService.signUp(signUpRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create an Account", description = "Add your details below to create account")
+    public SignUpResponse signUp(@RequestBody @Valid SignUpRequest signUpRequest){
+        return authService.signUp(signUpRequest);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest){
-        LoginResponse loginResponse = authService.login(loginRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Login into your Account", description = "Add your details below login your account")
+    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest){
+        return authService.login(loginRequest);
     }
 }

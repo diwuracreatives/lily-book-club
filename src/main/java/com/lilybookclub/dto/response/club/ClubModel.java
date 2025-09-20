@@ -1,4 +1,4 @@
-package com.lilybookclub.dto.response.user;
+package com.lilybookclub.dto.response.club;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,11 +6,11 @@ import lombok.Data;
 @Data
 @Builder
 public class ClubModel {
-    private String code;
     private String name;
     private String category;
     private String readingDay;
-    private int membersCount;
+    private String description;
+    private long membersCount;
 }
 
 

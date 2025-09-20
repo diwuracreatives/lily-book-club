@@ -1,7 +1,6 @@
 package com.lilybookclub.advice;
 
 import com.lilybookclub.exception.BadRequestException;
-import com.lilybookclub.exception.AlreadyExistException;
 import com.lilybookclub.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,9 +55,4 @@ public class ErrorControllerAdvice {
         return buildErrorResponse(ex.getMessage());
     }
 
-    @ExceptionHandler(value = AlreadyExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponseEnvelope handleResourceAlreadyExist(AlreadyExistException ex) {
-        return buildErrorResponse(ex.getMessage());
-    }
 }

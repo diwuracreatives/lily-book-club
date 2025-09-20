@@ -1,6 +1,5 @@
 package com.lilybookclub.entity;
 
-import com.lilybookclub.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,8 +19,7 @@ public abstract class BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private Boolean isDeleted;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -38,8 +36,8 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        if (status == null) {
-            status = Status.ACTIVE;
+        if (isDeleted == null) {
+            isDeleted = false;
         }
     }
 }

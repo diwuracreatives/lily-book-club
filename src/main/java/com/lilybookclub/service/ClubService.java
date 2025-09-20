@@ -3,16 +3,18 @@ package com.lilybookclub.service;
 import com.lilybookclub.dto.request.club.ClubActionByAdminRequest;
 import com.lilybookclub.dto.request.club.ClubActionByUserRequest;
 import com.lilybookclub.dto.request.club.CreateClubRequest;
-import com.lilybookclub.dto.response.user.ClubModel;
+import com.lilybookclub.dto.response.club.ClubModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ClubService {
-    ClubModel CreateClub(CreateClubRequest createClubRequest);
-    List<ClubModel> GetClubs();
-    ClubModel GetClubByCategory(String category);
-    ClubModel JoinClubByUser(ClubActionByUserRequest clubActionByUserRequest);
-    ClubModel JoinClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest);
-    String LeaveClubByUser(ClubActionByUserRequest clubActionByUserRequest);
-    String LeaveClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest);
+    ClubModel createClub(CreateClubRequest createClubRequest);
+    Page<ClubModel> getClubs(Pageable pageable);
+    ClubModel getClubByCategory(String category);
+    ClubModel joinClubByUser(ClubActionByUserRequest clubActionByUserRequest);
+    ClubModel joinClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest);
+    String leaveClubByUser(ClubActionByUserRequest clubActionByUserRequest);
+    String leaveClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest);
 }

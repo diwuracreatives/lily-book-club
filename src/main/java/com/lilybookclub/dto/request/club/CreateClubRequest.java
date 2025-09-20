@@ -16,5 +16,9 @@ public class CreateClubRequest {
 
     @NotBlank(message = "Club category is required")
     private String category;
+
+    @NotBlank(message = "Club description is required")
+    @Size(min = 5, message = "Club description must be at least 5 characters")
+    private String description;
 }
 

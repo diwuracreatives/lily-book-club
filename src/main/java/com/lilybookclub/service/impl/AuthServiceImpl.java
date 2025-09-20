@@ -33,18 +33,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest){
-          boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getEmail());
+          boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getEmail().trim());
 
           if (userAccountExist){
               throw new BadRequestException("An account with this email address already exists");
           }
 
-          String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+          String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword().trim());
 
           User user = User.builder()
                 .email(signUpRequest.getEmail())
-                .firstname(signUpRequest.getFirstname())
-                .lastname(signUpRequest.getLastname())
+                .firstname(signUpRequest.getFirstname().trim())
+                .lastname(signUpRequest.getLastname().trim())
                 .password(encodedPassword)
                 .role(Role.USER)
                 .build();
@@ -53,14 +53,14 @@ public class AuthServiceImpl implements AuthService {
            return SignUpResponse.builder()
                 .email(user.getEmail())
                 .firstname(user.getFirstname())
-                 .lastname(user.getLastname())
+                   .lastname(user.getLastname())
                 .build();
 
     }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest){
-        User user = userRepository.findByEmail(loginRequest.getEmail())
+        User user = userRepository.findByEmail(loginRequest.getEmail().trim())
                 .orElseThrow(() -> new NotFoundException("Account with email address not found"));
 
         return authenticateUser(loginRequest, user);
