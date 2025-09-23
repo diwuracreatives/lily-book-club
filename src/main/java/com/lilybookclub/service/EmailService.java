@@ -1,5 +1,7 @@
 package com.lilybookclub.service;
 
-public interface EmailService {
+import java.util.Map;
 
+public interface EmailService {
+     void sendMail(String mailTo, String mailSubject, String templateLocation, Map<String, Object> params);
 }

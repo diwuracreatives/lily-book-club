@@ -1,7 +1,6 @@
 package com.lilybookclub.controller;
 
 import com.lilybookclub.dto.request.club.ClubActionByAdminRequest;
-import com.lilybookclub.dto.request.club.ClubActionByUserRequest;
 import com.lilybookclub.dto.request.club.CreateClubRequest;
 import com.lilybookclub.dto.response.club.ClubModel;
 import com.lilybookclub.service.ClubService;
@@ -11,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,8 +21,8 @@ import java.util.Map;
 @RequestMapping("/api/v1/clubs")
 @RestController
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Club Management", description = "Endpoints for managing club by user and admin")
+@SecurityRequirement(name="Bearer Authentication")
 public class ClubController {
     private final ClubService clubService;
 
@@ -35,26 +35,26 @@ public class ClubController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<ClubModel> getClubs(@PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+    public Page<ClubModel> getClubs(@PageableDefault(size = 10, page = 0, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
         return clubService.getClubs(pageable);
     }
 
-    @GetMapping("/categories")
+    @GetMapping("/{category}")
     @ResponseStatus(HttpStatus.OK)
-    public ClubModel getClubByCategory(@RequestParam("category") String category) {
+    public ClubModel getClubByCategory(@PathVariable String category) {
         return clubService.getClubByCategory(category);
     }
 
-    @PostMapping("/users")
+    @PostMapping("/{category}/join")
     @ResponseStatus(HttpStatus.OK)
-    public ClubModel joinClubByUser(@RequestBody @Valid ClubActionByUserRequest clubActionByUserRequest) {
-        return clubService.joinClubByUser(clubActionByUserRequest);
+    public ClubModel joinClubByUser(@PathVariable String category) {
+        return clubService.joinClubByUser(category);
     }
 
-    @DeleteMapping("/users")
+    @DeleteMapping("/{category}/leave")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> leaveClubByUser(@RequestBody @Valid ClubActionByUserRequest clubActionByUserRequest) {
-        String message = clubService.leaveClubByUser(clubActionByUserRequest);
+    public Map<String, String> leaveClubByUser(@PathVariable String category) {
+        String message = clubService.leaveClubByUser(category);
         return Map.of("message", message);
     }
 

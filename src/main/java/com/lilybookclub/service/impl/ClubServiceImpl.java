@@ -2,8 +2,8 @@ package com.lilybookclub.service.impl;
 
 import com.lilybookclub.dto.request.club.CreateClubRequest;
 import com.lilybookclub.dto.request.club.ClubActionByAdminRequest;
-import com.lilybookclub.dto.request.club.ClubActionByUserRequest;
 import com.lilybookclub.dto.response.club.ClubModel;
+import com.lilybookclub.dto.response.club.ClubWithMemberCount;
 import com.lilybookclub.entity.Club;
 import com.lilybookclub.entity.User;
 import com.lilybookclub.entity.UserClub;
@@ -16,15 +16,16 @@ import com.lilybookclub.repository.UserClubRepository;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.UserDetailsServiceImpl;
 import com.lilybookclub.service.ClubService;
+import com.lilybookclub.service.EmailService;
 import com.lilybookclub.util.ClubUtil;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -35,15 +36,22 @@ public class ClubServiceImpl implements ClubService {
     private final UserClubRepository userClubRepository;
     private final UserRepository userRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final EmailService emailService;
 
     private Category getCategory(String category){
-        return Category.valueOf(category);
+        try {
+            return Category.valueOf(category.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new NotFoundException("Category Not Found");
+        }
+
     }
 
     @Override
     public ClubModel createClub(CreateClubRequest createClubRequest){
 
-        if (clubRepository.existsByCategory(Category.valueOf(createClubRequest.getCategory().trim().toLowerCase()))) {
+        Category category = getCategory(createClubRequest.getCategory());
+        if (clubRepository.existsByCategory(category)) {
             throw new BadRequestException("Club with this category already exist!");
         }
 
@@ -52,48 +60,44 @@ public class ClubServiceImpl implements ClubService {
         Club club = Club.builder()
                 .name(createClubRequest.getName().trim().toLowerCase())
                 .readingDay(dayOfTheWeek)
-                .category(getCategory(createClubRequest.getCategory().trim().toLowerCase()))
+                .category(category)
+                .description(createClubRequest.getDescription().trim().toLowerCase())
                 .build();
         clubRepository.save(club);
 
         return ClubModel.builder()
                 .name(createClubRequest.getName().trim().toLowerCase())
-                .category(createClubRequest.getCategory().toLowerCase())
+                .category(createClubRequest.getCategory())
                 .readingDay(dayOfTheWeek.name())
-                .description(createClubRequest.getDescription())
+                .description(createClubRequest.getDescription().trim())
                 .build();
     }
 
     @Override
     public Page<ClubModel> getClubs(Pageable pageable){
-           return clubRepository.findAllWithMemberCount(pageable)
-                   .map( res -> {
-                               Club club = (Club) res[0];
-                               Long memberCount = (Long) res[1];
-
-                             return  ClubModel.builder()
+        return clubRepository.findAllWithMemberCount(pageable)
+                   .map( result -> {
+                            Club club = result.getClub();
+                            Long memberCount = result.getMemberCount();
+                            return  ClubModel.builder()
                            .name(club.getName())
                            .category(club.getCategory().name())
                            .readingDay(club.getReadingDay().name())
                            .description(club.getDescription())
                            .membersCount(memberCount)
                            .build();
-                    }
+                   }
                    );
     }
 
-
     @Override
     public ClubModel getClubByCategory(String category){
+        ClubWithMemberCount result = clubRepository.findWithMemberCountByCategory(getCategory(category))
+                .orElseThrow(() -> new NotFoundException("Club with this category not found"));
 
-        Object[] res = clubRepository.findWithMemberCountByCategory(getCategory(category));
+        Club club = result.getClub();
+        Long memberCount = result.getMemberCount();
 
-        if (res == null) {
-            throw new NotFoundException("Club with this category not found");
-        }
-
-        Club club = (Club) res[0];
-        Long memberCount = (Long) res[1];
         return ClubModel.builder()
                 .name(club.getName())
                 .category(club.getCategory().name())
@@ -104,9 +108,9 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public ClubModel joinClubByUser(ClubActionByUserRequest clubActionByUserRequest){
+    public ClubModel joinClubByUser(String category){
         User user = userDetailsService.getLoggedInUser();
-        return createUserClub(clubActionByUserRequest.getCategory(), user);
+        return createUserClub(category, user);
     }
 
     @Override
@@ -116,14 +120,12 @@ public class ClubServiceImpl implements ClubService {
         return createUserClub(clubActionByAdminRequest.getCategory(), user);
     }
 
-    @Transactional
     @Override
-    public String leaveClubByUser(ClubActionByUserRequest clubActionByUserRequest){
+    public String leaveClubByUser(String category){
         User user = userDetailsService.getLoggedInUser();
-        return deleteUserClub(clubActionByUserRequest.getCategory(), user);
+        return deleteUserClub(category, user);
     }
 
-    @Transactional
     @Override
     public String leaveClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest){
         User user = userRepository.findById(clubActionByAdminRequest.getUserId())
@@ -132,14 +134,11 @@ public class ClubServiceImpl implements ClubService {
     }
 
     private ClubModel createUserClub(String category, User user){
-        Object[] res = clubRepository.findWithMemberCountByCategory(getCategory(category));
+        ClubWithMemberCount result = clubRepository.findWithMemberCountByCategory(getCategory(category))
+                .orElseThrow(() -> new NotFoundException("Club with this category not found"));
 
-        if (res == null) {
-            throw new NotFoundException("Club with this category not found");
-        }
-
-        Club club = (Club) res[0];
-        Long memberCount = (Long) res[1];
+        Club club = result.getClub();
+        Long memberCount = result.getMemberCount();
 
         if (userClubRepository.existsByUserAndClub(user, club)){
               throw new BadRequestException("User is already a member of this club");
@@ -150,6 +149,11 @@ public class ClubServiceImpl implements ClubService {
                   .user(user)
                   .build();
           userClubRepository.save(userClub);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", user.getFirstname());
+        params.put("clubName", club.getName());
+        emailService.sendMail(user.getEmail(), "Welcome to Lily Book Club", "club-welcome", params);
 
         return ClubModel.builder()
                 .name(club.getName())
@@ -164,9 +168,10 @@ public class ClubServiceImpl implements ClubService {
         Club club = checkIfClubExists(category);
         Optional <UserClub> userClub = userClubRepository.findByUserAndClub(user, club);
 
-         if (userClub.isPresent()){
-             userClubRepository.deleteByUserAndClub(user, club);
-         };
+        if (userClub.isPresent()) {
+            userClub.get().setIsDeleted(true);
+            userClubRepository.save(userClub.get());
+        }
 
         String name = club.getName();
         return String.format("User successfully removed from club: %s", name);

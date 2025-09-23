@@ -1,7 +1,7 @@
 package com.lilybookclub.dto.request.club;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClubActionByAdminRequest {
-    @NotNull(message = "User Id is required")
+    @Positive(message = "User Id is required and must be a positive number")
     private long userId;
     @NotBlank(message = "Club category is required")
     private String category;

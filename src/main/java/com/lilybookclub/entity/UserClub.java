@@ -2,9 +2,11 @@ package com.lilybookclub.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "user_clubs", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@SQLRestriction("is_deleted = false")
 @Getter
 @Setter
 @Builder
