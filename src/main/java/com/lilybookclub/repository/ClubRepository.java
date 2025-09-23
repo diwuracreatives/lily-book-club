@@ -29,5 +29,7 @@ public interface ClubRepository extends JpaRepositoryImplementation<Club,Long> {
         GROUP BY c
       """)
       Object[] findWithMemberCountByCategory(@Param("category") Category category);
+
+      boolean existsByCode(String code);
 }
 

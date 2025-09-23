@@ -14,10 +14,15 @@ import lombok.*;
 @AllArgsConstructor
 public class Club extends BaseEntity{
     private String name;
+
+    private String code;
+
     @Enumerated(EnumType.STRING)
     private DayOfTheWeek readingDay;
+
     @Enumerated(EnumType.STRING)
     private Category category;
+
     private String description;
 
 }
