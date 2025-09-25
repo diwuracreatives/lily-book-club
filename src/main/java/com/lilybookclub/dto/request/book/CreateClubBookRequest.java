@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClubBookRequest {
+public class CreateClubBookRequest {
+
     @Positive(message = "Club Id is required and must be a positive number")
     private long clubId;
 
     @Positive(message = "Book Id is required and must be a positive number")
     private long bookId;
+
 }

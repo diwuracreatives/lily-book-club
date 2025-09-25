@@ -6,12 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class LoginRequest {
 
     @NotBlank(message = "Your Email is required")
@@ -23,4 +26,11 @@ public class LoginRequest {
     @Pattern(regexp = AppConstant.PASSWORD_REGEX, message = "Your Password must contain both letter and a number")
     private String password;
 
+    public String getNullableEmail() {
+        return StringUtils.isBlank(email) ? null : StringUtils.trim(email).toUpperCase();
+    }
+
+    public String getNullablePassword() {
+        return StringUtils.isBlank(password) ? null : StringUtils.trim(password).toUpperCase();
+    }
 }

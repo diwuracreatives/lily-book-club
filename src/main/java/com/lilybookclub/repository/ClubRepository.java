@@ -12,23 +12,28 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface ClubRepository extends JpaRepository<Club,Long> {
-      boolean existsByCategory(Category category);
-      Optional <Club> findByCategory(Category category);
+
+      boolean existsByCode(String code);
+
+      Optional <Club> findByCode(String code);
+
       @Query("""
         SELECT c AS club, COUNT(uc) AS memberCount
         FROM Club c
         LEFT JOIN UserClub uc ON uc.club = c
+        WHERE (:category IS NULL OR c.category = :category)
         GROUP BY c
         """)
-       Page<ClubWithMemberCount> findAllWithMemberCount(Pageable pageable);
+       Page<ClubWithMemberCount> findAllWithMemberCount(@Param("category") Category category, Pageable pageable);
+
 
       @Query("""
         SELECT c as club, COUNT(uc) as memberCount
         FROM Club c
         LEFT JOIN UserClub uc ON uc.club = c
-        WHERE c.category = :category
+        WHERE c.code = :code
         GROUP BY c
         """)
-      Optional<ClubWithMemberCount> findWithMemberCountByCategory(@Param("category") Category category);
+      Optional<ClubWithMemberCount> findWithMemberCountByCode(@Param("code") String code);
 }
 

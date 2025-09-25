@@ -1,8 +1,7 @@
 package com.lilybookclub.controller;
 
 import com.lilybookclub.dto.request.book.CreateBookRequest;
-import com.lilybookclub.dto.request.book.ClubBookRequest;
-import com.lilybookclub.dto.request.book.RecommendBookRequest;
+import com.lilybookclub.dto.request.book.CreateClubBookRequest;
 import com.lilybookclub.dto.response.book.BookModel;
 import com.lilybookclub.service.BookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,9 +29,10 @@ public class BookController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<BookModel> getBooks(@PageableDefault(size = 10, page = 0, sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
+    public Page<BookModel> getBooks(@PageableDefault(sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
         return bookService.getBooks(pageable);
     }
+
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,10 +41,16 @@ public class BookController {
         return bookService.addBookByAdmin(createBookRequest);
     }
 
+    @GetMapping("club/{clubCode}")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<BookModel> get(@PathVariable String clubCode, @PageableDefault(sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
+        return bookService.getAllUpcomingBooks(clubCode, pageable);
+    }
+
     @PostMapping("/club")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, String>  addBookToClub(@RequestBody @Valid ClubBookRequest createClubBookRequest) {
+    public Map<String, String>  addBookToClub(@RequestBody @Valid CreateClubBookRequest createClubBookRequest) {
         String message = bookService.addBookToClub(createClubBookRequest);
         return Map.of("message", message);
     }
@@ -52,7 +58,7 @@ public class BookController {
     @DeleteMapping("/club")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> removeBookFromClub(@RequestBody @Valid ClubBookRequest createClubBookRequest) {
+    public Map<String, String> removeBookFromClub(@RequestBody @Valid CreateClubBookRequest createClubBookRequest) {
         String message = bookService.removeBookFromClub(createClubBookRequest);
         return Map.of("message", message);
     }
@@ -69,10 +75,10 @@ public class BookController {
         return bookService.downvoteBook(bookId);
     }
 
-    @PostMapping("/recommendations")
+    @PostMapping("/recommendations/{clubCode}")
     @ResponseStatus(HttpStatus.OK)
-    public BookModel recommendBook(@RequestBody @Valid RecommendBookRequest recommendBookRequest) {
-        return bookService.recommendBook(recommendBookRequest);
+    public BookModel recommendBook(@RequestBody @Valid CreateBookRequest createBookRequest, @PathVariable String clubCode) {
+        return bookService.recommendBook(createBookRequest, clubCode);
     }
 
     @PostMapping("/{bookId}/approve")

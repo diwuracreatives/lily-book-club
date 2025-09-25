@@ -3,6 +3,7 @@ package com.lilybookclub.controller;
 import com.lilybookclub.dto.request.club.ClubActionByAdminRequest;
 import com.lilybookclub.dto.request.club.CreateClubRequest;
 import com.lilybookclub.dto.response.club.ClubModel;
+import com.lilybookclub.enums.Category;
 import com.lilybookclub.service.ClubService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,26 +36,26 @@ public class ClubController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<ClubModel> getClubs(@PageableDefault(size = 10, page = 0, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-        return clubService.getClubs(pageable);
+    public Page<ClubModel> getClubs(@RequestParam(value = "category", required = false) Category category, @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        return clubService.getClubs(category, pageable);
     }
 
-    @GetMapping("/{category}")
+    @GetMapping("/{clubCode}")
     @ResponseStatus(HttpStatus.OK)
-    public ClubModel getClubByCategory(@PathVariable String category) {
-        return clubService.getClubByCategory(category);
+    public ClubModel getClubByCategory(@PathVariable String clubCode) {
+        return clubService.getClubByCode(clubCode);
     }
 
-    @PostMapping("/{category}/join")
+    @PostMapping("/{clubCode}/join")
     @ResponseStatus(HttpStatus.OK)
-    public ClubModel joinClubByUser(@PathVariable String category) {
-        return clubService.joinClubByUser(category);
+    public ClubModel joinClubByUser(@PathVariable String clubCode) {
+        return clubService.joinClubByUser(clubCode);
     }
 
-    @DeleteMapping("/{category}/leave")
+    @DeleteMapping("/{clubCode}/leave")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> leaveClubByUser(@PathVariable String category) {
-        String message = clubService.leaveClubByUser(category);
+    public Map<String, String> leaveClubByUser(@PathVariable String clubCode) {
+        String message = clubService.leaveClubByUser(clubCode);
         return Map.of("message", message);
     }
 

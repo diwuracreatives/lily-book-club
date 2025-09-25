@@ -1,8 +1,7 @@
 package com.lilybookclub.service.impl;
 
-import com.lilybookclub.dto.request.book.ClubBookRequest;
+import com.lilybookclub.dto.request.book.CreateClubBookRequest;
 import com.lilybookclub.dto.request.book.CreateBookRequest;
-import com.lilybookclub.dto.request.book.RecommendBookRequest;
 import com.lilybookclub.dto.response.book.BookModel;
 import com.lilybookclub.dto.response.book.BookWithUpvoteCount;
 import com.lilybookclub.entity.*;
@@ -31,6 +30,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+
       private final BookRepository bookRepository;
       private final ClubRepository clubRepository;
       private final ClubBookRepository clubBookRepository;
@@ -45,25 +45,24 @@ public class BookServiceImpl implements BookService {
     private Book checkIfBookExists(Long bookId){
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException("Book with this id not found"));
-     };
+     }
 
     private Club checkIfClubExists(Long clubId){
         return clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with this id not found"));
     }
 
-
     private Book createBook(CreateBookRequest createBookRequest){
          Book book = Book.builder()
-                 .title(createBookRequest.getTitle().trim().toLowerCase())
-                 .author(createBookRequest.getAuthor().trim().toLowerCase())
-                 .link(createBookRequest.getLink().trim().toLowerCase())
-                 .imageUrl(createBookRequest.getImageUrl().trim().toLowerCase())
-                 .description(createBookRequest.getDescription().trim())
+                 .title(createBookRequest.getNullableTitle())
+                 .author(createBookRequest.getNullableAuthor())
+                 .link(createBookRequest.getNullableLink())
+                 .imageUrl(createBookRequest.getNullableImageUrl())
+                 .description(createBookRequest.getNullableDescription())
                  .build();
          bookRepository.save(book);
          return book;
-     };
+     }
 
      private String createClubBook(Long bookId, Long clubId){
          ClubBook clubBook = ClubBook.builder()
@@ -77,6 +76,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
      public BookModel addBookByAdmin(CreateBookRequest createBookRequest){
+
            createBook(createBookRequest);
            return BookModel.builder()
                    .title(createBookRequest.getTitle())
@@ -88,19 +88,23 @@ public class BookServiceImpl implements BookService {
      }
 
     @Override
-     public String addBookToClub(ClubBookRequest createClubBookRequest){
+     public String addBookToClub(CreateClubBookRequest createClubBookRequest){
          return createClubBook(createClubBookRequest.getBookId(), createClubBookRequest.getClubId());
      }
 
     @Override
-     public String removeBookFromClub(ClubBookRequest removeClubBookRequest){
+     public String removeBookFromClub(CreateClubBookRequest removeClubBookRequest){
+
           Book book = checkIfBookExists(removeClubBookRequest.getBookId());
           Club club = checkIfClubExists(removeClubBookRequest.getClubId());
+
           Optional<ClubBook> clubBook = clubBookRepository.findByClubAndBook(club, book);
+
           if (clubBook.isPresent()) {
               clubBook.get().setIsDeleted(true);
               clubBookRepository.save(clubBook.get());
           }
+
           return String.format("Book: %s successfully removed from club: %s", removeClubBookRequest.getBookId(), removeClubBookRequest.getClubId());
      }
 
@@ -115,6 +119,7 @@ public class BookServiceImpl implements BookService {
      }
 
      private BookModel bookAction(Long bookId, Vote vote){
+
          Book book = checkIfBookExists(bookId);
          User user = userDetailsService.getLoggedInUser();
 
@@ -135,6 +140,7 @@ public class BookServiceImpl implements BookService {
          }
 
          BookWithUpvoteCount bookWithUpvoteCount = bookRepository.findWithVoteCounts(book);
+
          Long upvoteCount = bookWithUpvoteCount.getUpvoteCount();
          Long downvoteCount = bookWithUpvoteCount.getDownvoteCount();
 
@@ -165,11 +171,15 @@ public class BookServiceImpl implements BookService {
                              .downvoteCount(downvoteCount)
                              .build();
                  });
+
      }
 
     @Override
-     public BookModel recommendBook(RecommendBookRequest recommendBookRequest){
-         Club club = checkIfClubExists(recommendBookRequest.getClubId());
+     public BookModel recommendBook(CreateBookRequest recommendBookRequest, String clubCode){
+
+         Club club = clubRepository.findByCode(clubCode)
+                 .orElseThrow(() -> new NotFoundException("Club with this code not found"));
+
          User user = userDetailsService.getLoggedInUser();
 
          if (!userClubRepository.existsByUserAndClub(user, club)){
@@ -179,22 +189,22 @@ public class BookServiceImpl implements BookService {
          RecommendedBook recommendedBook = RecommendedBook.builder()
                  .club(club)
                  .user(user)
-                 .title(recommendBookRequest.getTitle().trim().toLowerCase())
-                 .author(recommendBookRequest.getAuthor().trim().toLowerCase())
-                 .link(recommendBookRequest.getLink().trim().toLowerCase())
-                 .imageUrl(recommendBookRequest.getImageUrl().trim().toLowerCase())
-                 .description(recommendBookRequest.getDescription().trim().toLowerCase())
+                 .title(recommendBookRequest.getNullableTitle())
+                 .author(recommendBookRequest.getNullableAuthor())
+                 .link(recommendBookRequest.getNullableLink())
+                 .imageUrl(recommendBookRequest.getNullableImageUrl())
+                 .description(recommendBookRequest.getNullableDescription())
                  .bookApprovalStatus(BookApprovalStatus.PENDING)
                  .build();
 
          recommendedBookRepository.save(recommendedBook);
 
          return BookModel.builder()
-                 .title(recommendBookRequest.getTitle())
-                 .author(recommendBookRequest.getAuthor())
-                 .link(recommendBookRequest.getLink())
-                 .imageUrl(recommendBookRequest.getImageUrl())
-                 .description(recommendBookRequest.getDescription())
+                 .title(recommendBookRequest.getNullableTitle())
+                 .author(recommendBookRequest.getNullableAuthor())
+                 .link(recommendBookRequest.getNullableLink())
+                 .imageUrl(recommendBookRequest.getNullableImageUrl())
+                 .description(recommendBookRequest.getNullableDescription())
                  .build();
      }
 
@@ -230,6 +240,7 @@ public class BookServiceImpl implements BookService {
 
      @Override
     public String rejectRecommendedBook(Long bookId){
+
         RecommendedBook recommendedBook = getRecommendedBook(bookId);
 
          if (recommendedBook.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
@@ -239,11 +250,23 @@ public class BookServiceImpl implements BookService {
 
         return String.format("The recommended book: %s has been rejected for Club %s.",
                 recommendedBook.getTitle(), recommendedBook.getClub().getName());
+
         //send email to user
     }
 
-    private Page<ClubBook> findNextClubBooks(Club club, Pageable pageable){
-         return clubBookRepository.findNextClubBook(club, pageable);
+    public Page<BookModel> getAllUpcomingBooks(String code, Pageable pageable) {
+        Club club = clubRepository.findByCode(code).orElseThrow(() -> new NotFoundException("Club with this code not found"));
+        return clubBookRepository.findNextClubBook(club, PageRequest.of(0, 5))
+                .map(clubBook -> {
+                    Book book = clubBook.getBook();
+                    return BookModel.builder()
+                            .title(book.getTitle())
+                            .author(book.getAuthor())
+                            .link(book.getLink())
+                            .imageUrl(book.getImageUrl())
+                            .description(book.getDescription())
+                            .build();
+                });
     }
 
     private Book getWeeklyRecommendedBook(Club club){

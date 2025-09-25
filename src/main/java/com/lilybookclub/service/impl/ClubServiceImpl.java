@@ -38,50 +38,43 @@ public class ClubServiceImpl implements ClubService {
     private final UserDetailsServiceImpl userDetailsService;
     private final EmailService emailService;
 
-    private Category getCategory(String category){
-        try {
-            return Category.valueOf(category.trim().toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new NotFoundException("Category Not Found");
-        }
-
-    }
-
     @Override
     public ClubModel createClub(CreateClubRequest createClubRequest){
 
-        Category category = getCategory(createClubRequest.getCategory());
-        if (clubRepository.existsByCategory(category)) {
-            throw new BadRequestException("Club with this category already exist!");
+        if (clubRepository.existsByCode(createClubRequest.getNullableCode())){
+            throw new BadRequestException("Club with this code already exists");
         }
 
         DayOfTheWeek dayOfTheWeek = ClubUtil.generateReadingDay();
 
         Club club = Club.builder()
-                .name(createClubRequest.getName().trim().toLowerCase())
+                .name(createClubRequest.getNullableName())
                 .readingDay(dayOfTheWeek)
-                .category(category)
-                .description(createClubRequest.getDescription().trim().toLowerCase())
+                .code(createClubRequest.getNullableCode())
+                .category(createClubRequest.getCategory())
+                .description(createClubRequest.getNullableDescription())
                 .build();
         clubRepository.save(club);
 
         return ClubModel.builder()
-                .name(createClubRequest.getName().trim().toLowerCase())
+                .name(createClubRequest.getNullableName())
+                .code(createClubRequest.getNullableCode())
                 .category(createClubRequest.getCategory())
                 .readingDay(dayOfTheWeek.name())
-                .description(createClubRequest.getDescription().trim())
+                .description(createClubRequest.getNullableDescription())
                 .build();
     }
 
     @Override
-    public Page<ClubModel> getClubs(Pageable pageable){
-        return clubRepository.findAllWithMemberCount(pageable)
+    public Page<ClubModel> getClubs(Category category, Pageable pageable){
+        return clubRepository.findAllWithMemberCount(category, pageable)
                    .map( result -> {
                             Club club = result.getClub();
                             Long memberCount = result.getMemberCount();
                             return  ClubModel.builder()
                            .name(club.getName())
-                           .category(club.getCategory().name())
+                            .code(club.getCode())
+                           .category(club.getCategory())
                            .readingDay(club.getReadingDay().name())
                            .description(club.getDescription())
                            .membersCount(memberCount)
@@ -91,16 +84,16 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public ClubModel getClubByCategory(String category){
-        ClubWithMemberCount result = clubRepository.findWithMemberCountByCategory(getCategory(category))
-                .orElseThrow(() -> new NotFoundException("Club with this category not found"));
+    public ClubModel getClubByCode(String code){
 
-        Club club = result.getClub();
-        Long memberCount = result.getMemberCount();
+        ClubWithMemberCount clubWithMemberCount = getClubWithMemberCount(code);
+        Club club = clubWithMemberCount.getClub();
+        Long memberCount = clubWithMemberCount.getMemberCount();
 
         return ClubModel.builder()
                 .name(club.getName())
-                .category(club.getCategory().name())
+                .code(club.getCode())
+                .category(club.getCategory())
                 .readingDay(club.getReadingDay().name())
                 .description(club.getDescription())
                 .membersCount(memberCount)
@@ -108,37 +101,36 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public ClubModel joinClubByUser(String category){
+    public ClubModel joinClubByUser(String code){
         User user = userDetailsService.getLoggedInUser();
-        return createUserClub(category, user);
+        return createUserClub(code, user);
     }
 
     @Override
     public ClubModel joinClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest){
         User user = userRepository.findById(clubActionByAdminRequest.getUserId())
                 .orElseThrow(() -> new NotFoundException("User with this id not found"));
-        return createUserClub(clubActionByAdminRequest.getCategory(), user);
+        return createUserClub(clubActionByAdminRequest.getNullableCode(), user);
     }
 
     @Override
-    public String leaveClubByUser(String category){
+    public String leaveClubByUser(String code){
         User user = userDetailsService.getLoggedInUser();
-        return deleteUserClub(category, user);
+        return deleteUserClub(code, user);
     }
 
     @Override
     public String leaveClubByAdmin(ClubActionByAdminRequest clubActionByAdminRequest){
         User user = userRepository.findById(clubActionByAdminRequest.getUserId())
                 .orElseThrow(() -> new NotFoundException("User with this id not found"));
-        return deleteUserClub(clubActionByAdminRequest.getCategory(), user);
+        return deleteUserClub(clubActionByAdminRequest.getNullableCode(), user);
     }
 
-    private ClubModel createUserClub(String category, User user){
-        ClubWithMemberCount result = clubRepository.findWithMemberCountByCategory(getCategory(category))
-                .orElseThrow(() -> new NotFoundException("Club with this category not found"));
+    private ClubModel createUserClub(String code, User user){
 
-        Club club = result.getClub();
-        Long memberCount = result.getMemberCount();
+        ClubWithMemberCount clubWithMemberCount = getClubWithMemberCount(code);
+        Club club = clubWithMemberCount.getClub();
+        Long memberCount = clubWithMemberCount.getMemberCount();
 
         if (userClubRepository.existsByUserAndClub(user, club)){
               throw new BadRequestException("User is already a member of this club");
@@ -157,15 +149,17 @@ public class ClubServiceImpl implements ClubService {
 
         return ClubModel.builder()
                 .name(club.getName())
-                .category(club.getCategory().name())
+                .category(club.getCategory())
+                .code(club.getCode())
                 .readingDay(club.getReadingDay().name())
                 .description(club.getDescription())
                 .membersCount(memberCount)
                 .build();
     }
 
-    private String deleteUserClub(String category, User user){
-        Club club = checkIfClubExists(category);
+    private String deleteUserClub(String code, User user){
+
+        Club club = checkIfClubExists(code);
         Optional <UserClub> userClub = userClubRepository.findByUserAndClub(user, club);
 
         if (userClub.isPresent()) {
@@ -175,11 +169,17 @@ public class ClubServiceImpl implements ClubService {
 
         String name = club.getName();
         return String.format("User successfully removed from club: %s", name);
+
     }
 
-    private Club checkIfClubExists(String category){
-        return clubRepository.findByCategory(getCategory(category))
-                .orElseThrow(() -> new NotFoundException("Club with this category not found"));
+    private Club checkIfClubExists(String code){
+        return clubRepository.findByCode(code)
+                .orElseThrow(() -> new NotFoundException("Club with this code not found"));
+    }
+
+    private ClubWithMemberCount getClubWithMemberCount(String code){
+        return clubRepository.findWithMemberCountByCode(code)
+                .orElseThrow(() -> new NotFoundException("Club with this code not found"));
     }
 
 }

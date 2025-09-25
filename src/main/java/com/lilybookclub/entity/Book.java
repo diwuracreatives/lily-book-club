@@ -15,10 +15,15 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book extends BaseEntity {
+
     private String title;
+
     private String author;
+
     private String link;
+
     private String imageUrl;
+
     private String description;
 }
 

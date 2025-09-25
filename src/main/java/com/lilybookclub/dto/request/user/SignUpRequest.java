@@ -6,13 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class SignUpRequest {
 
     @NotBlank(message = "Your Email is required")
@@ -25,9 +28,30 @@ public class SignUpRequest {
     private String password;
 
     @NotBlank(message = "Your first name is required")
+    @Size(min = 5, message = "First name is too short")
+    @Size(max = 250, message = "First name is too long")
     private String firstname;
 
     @NotBlank(message = "Your last name is required")
+    @Size(min = 5, message = "Last name is too short")
+    @Size(max = 250, message = "Last name is too long")
     private String lastname;
+
+    public String getNullableEmail() {
+        return StringUtils.isBlank(email) ? null : StringUtils.trim(email).toUpperCase();
+    }
+
+    public String getNullablePassword() {
+        return StringUtils.isBlank(password) ? null : StringUtils.trim(password).toUpperCase();
+    }
+
+    public String getNullableFirstname() {
+        return StringUtils.isBlank(firstname) ? null : StringUtils.trim(firstname).toUpperCase();
+    }
+
+    public String getNullableLastname() {
+        return StringUtils.isBlank(lastname) ? null : StringUtils.trim(lastname).toUpperCase();
+    }
+
 }
 

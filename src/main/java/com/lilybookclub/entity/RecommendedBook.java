@@ -25,10 +25,15 @@ public class RecommendedBook extends BaseEntity {
     @Column(name = "approval_status")
     @Enumerated(EnumType.STRING)
     private BookApprovalStatus bookApprovalStatus;
+
     private String title;
+
     private String author;
+
     private String link;
+
     private String imageUrl;
+
     private String description;
 }
 
