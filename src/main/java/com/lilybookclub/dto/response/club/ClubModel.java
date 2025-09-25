@@ -9,6 +9,7 @@ import lombok.Data;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClubModel {
+
     private String name;
 
     private String code;

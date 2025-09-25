@@ -43,45 +43,43 @@ public class ClubServiceImpl implements ClubService {
     @Override
     public ClubModel createClub(CreateClubRequest createClubRequest){
 
-        if (clubRepository.existsByCode(createClubRequest.getNullableCode())) {
-            throw new BadRequestException(String.format("Club with code %s already exists", createClubRequest.getNullableCode()));
+        if (clubRepository.existsByCategory(Category.valueOf(createClubRequest.getCategory().trim().toLowerCase()))) {
+            throw new BadRequestException("Club with this category already exist!");
         }
 
         DayOfTheWeek dayOfTheWeek = ClubUtil.generateReadingDay();
 
         Club club = Club.builder()
-                .name(createClubRequest.getNullableName())
+                .name(createClubRequest.getName().trim().toLowerCase())
                 .readingDay(dayOfTheWeek)
-                .category(createClubRequest.getCategory())
-                .code(createClubRequest.getNullableCode())
-                .description(createClubRequest.getNullableDescription())
+                .category(getCategory(createClubRequest.getCategory().trim().toLowerCase()))
                 .build();
         clubRepository.save(club);
 
         return ClubModel.builder()
                 .name(createClubRequest.getName().trim().toLowerCase())
-                .category(createClubRequest.getCategory())
+                .category(createClubRequest.getCategory().toLowerCase())
                 .readingDay(dayOfTheWeek.name())
                 .description(createClubRequest.getDescription())
                 .build();
     }
 
     @Override
-    public Page<ClubModel> getClubs(Pageable pageable) {
-        return clubRepository.findAllWithMemberCount(pageable)
-                .map(res -> {
-                            Club club = (Club) res[0];
-                            Long memberCount = (Long) res[1];
+    public Page<ClubModel> getClubs(Pageable pageable){
+           return clubRepository.findAllWithMemberCount(pageable)
+                   .map( res -> {
+                               Club club = (Club) res[0];
+                               Long memberCount = (Long) res[1];
 
-                            return ClubModel.builder()
-                                    .name(club.getName())
-                                    .category(club.getCategory())
-                                    .readingDay(club.getReadingDay().name())
-                                    .description(club.getDescription())
-                                    .membersCount(memberCount)
-                                    .build();
-                        }
-                );
+                             return  ClubModel.builder()
+                           .name(club.getName())
+                           .category(club.getCategory().name())
+                           .readingDay(club.getReadingDay().name())
+                           .description(club.getDescription())
+                           .membersCount(memberCount)
+                           .build();
+                    }
+                   );
     }
 
 
@@ -98,7 +96,7 @@ public class ClubServiceImpl implements ClubService {
         Long memberCount = (Long) res[1];
         return ClubModel.builder()
                 .name(club.getName())
-                .category(club.getCategory())
+                .category(club.getCategory().name())
                 .readingDay(club.getReadingDay().name())
                 .description(club.getDescription())
                 .membersCount(memberCount)
@@ -155,7 +153,7 @@ public class ClubServiceImpl implements ClubService {
 
         return ClubModel.builder()
                 .name(club.getName())
-                .category(club.getCategory())
+                .category(club.getCategory().name())
                 .readingDay(club.getReadingDay().name())
                 .description(club.getDescription())
                 .membersCount(memberCount)
@@ -168,7 +166,7 @@ public class ClubServiceImpl implements ClubService {
 
          if (userClub.isPresent()){
              userClubRepository.deleteByUserAndClub(user, club);
-         }
+         };
 
         String name = club.getName();
         return String.format("User successfully removed from club: %s", name);
