@@ -8,15 +8,21 @@ import lombok.*;
 @Table(name = "users")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity{
+
      @Column(unique = true, nullable = false, length = 100)
      private String email;
+
      @Column(nullable = false)
      private String password;
+
      private String firstname;
+
      private String lastname;
+
      private Role role;
 }
 
