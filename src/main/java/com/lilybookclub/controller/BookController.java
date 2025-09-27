@@ -33,7 +33,6 @@ public class BookController {
         return bookService.getBooks(pageable);
     }
 
-
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)

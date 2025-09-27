@@ -8,6 +8,7 @@ import com.lilybookclub.entity.User;
 import com.lilybookclub.enums.Role;
 import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
+import com.lilybookclub.mapper.UserMapper;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.jwt.JwtService;
 import com.lilybookclub.service.AuthService;
@@ -30,9 +31,11 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserMapper userMapper;
 
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest){
+
           boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getNullableEmail());
 
           if (userAccountExist){
@@ -50,23 +53,21 @@ public class AuthServiceImpl implements AuthService {
                 .build();
           userRepository.save(user);
 
-           return SignUpResponse.builder()
-                .email(user.getEmail())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .build();
+           return userMapper.toResponse(user);
 
     }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest){
-        User user = userRepository.findByEmail(loginRequest.getNullableEmail())
+
+        userRepository.findByEmail(loginRequest.getNullableEmail())
                 .orElseThrow(() -> new NotFoundException("Account with email address not found"));
 
-        return authenticateUser(loginRequest, user);
+        return authenticateUser(loginRequest);
+
     }
 
-    private LoginResponse authenticateUser(LoginRequest loginRequest, User user) {
+    private LoginResponse authenticateUser(LoginRequest loginRequest) {
     try {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

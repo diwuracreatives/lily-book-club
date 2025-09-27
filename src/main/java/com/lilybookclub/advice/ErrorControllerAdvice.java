@@ -48,7 +48,7 @@ public class ErrorControllerAdvice {
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            String result = String.format(fieldName,":", " ", errorMessage);
+            String result = String.format("%s: %s", fieldName, errorMessage);
             response.add(result);
         });
         return buildErrorResponse(response);
@@ -80,14 +80,14 @@ public class ErrorControllerAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiResponseEnvelope handleAuthorizationDeniedExceptions(Exception ex) {
         log.error("AuthorizationDeniedException. Error is : {}", ex.getMessage(), ex);
-        return buildErrorResponse("Access Denied: Only administrators can perform this operation");
+        return buildErrorResponse("Access Denied: You are not authorized to perform this operation");
     }
 
     @ExceptionHandler(value = InternalServerErrorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponseEnvelope handleInternalServerError(Exception ex) {
         log.error("InternalServerErrorException. Error is : {}", ex.getMessage(), ex);
-        return buildErrorResponse("An Error occurred, Something went wrong on our end.");
+        return buildErrorResponse("An Error occurred, Something went wrong on our end, Please try again later.");
     }
 
     @ExceptionHandler(value = Exception.class)

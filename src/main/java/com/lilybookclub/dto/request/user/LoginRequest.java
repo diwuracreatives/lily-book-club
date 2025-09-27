@@ -1,5 +1,6 @@
 package com.lilybookclub.dto.request.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lilybookclub.util.AppConstant;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,11 +27,13 @@ public class LoginRequest {
     @Pattern(regexp = AppConstant.PASSWORD_REGEX, message = "Your Password must contain both letter and a number")
     private String password;
 
+    @JsonIgnore
     public String getNullableEmail() {
         return StringUtils.isBlank(email) ? null : StringUtils.trim(email).toUpperCase();
     }
 
+    @JsonIgnore
     public String getNullablePassword() {
-        return StringUtils.isBlank(password) ? null : StringUtils.trim(password).toUpperCase();
+        return StringUtils.isBlank(password) ? null : StringUtils.trim(password);
     }
 }

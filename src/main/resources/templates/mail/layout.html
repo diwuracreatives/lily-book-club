@@ -3,19 +3,173 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Lily Book Club</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Delius+Swash+Caps&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Josefin Sans", Verdana, sans-serif;
+        }
+
+        .email-content{
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-top: 40px;
+            background-color: #FFF8FC;
+        }
+
+        header{
+            text-align: center;
+        }
+
+        main{
+            margin: 50px 30px 0 40px;
+        }
+
+        .main-content{
+            margin: 50px 30px 0 40px;
+        }
+
+        h1{
+            font-size: 45px;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 40px;
+        }
+
+        p , li{
+            font-family: "Delius Swash Caps", Verdana, sans-serif;
+        }
+
+        ul {
+            line-height: 27px;
+            font-size: 16px;
+        }
+
+        .tagline{
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .pointer{
+            font-size: 18px;
+        }
+
+        .action-btn{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0 60px 0;
+        }
+
+        button {
+            background-color: #EC6FA3;
+            width: 450px;
+            height: 75px;
+            border-radius: 50px;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+        }
+
+        button a {
+            text-decoration: none;
+            font-size: 22px;
+            font-family: "Josefin Sans", sans-serif;
+            color: white;
+        }
+
+        footer {
+            background-color: #F8C8DC;
+            text-align: center;
+            margin-top: 50px;
+            padding: 15px;
+        }
+
+        footer p {
+            font-size: 14px;
+            font-weight: lighter;
+        }
+
+        footer h4 {
+            font-size: 16px;
+            margin-top: 1px;
+            font-weight: 500;
+        }
+
+        /*for book page*/
+        .book-title {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            max-width: 400px;
+            line-height: 25px;
+        }
+
+        .book-section{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .book-image{
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            border: 2px solid #F297BD;
+        }
+        .book-summary{
+            border: 1px solid #F297BD;
+            padding: 10px 10px;
+            text-align: center;
+            margin: 30px 25px;
+        }
+        .feedback{
+            margin-top: -35px;
+        }
+        .vote-row{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .vote-row a{
+            font-size: 18px;
+            text-decoration: underline;
+            color: #EC6FA3 !important;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
+   <div class="email-content">
     <header>
-        <h1>Lily Book Club</h1>
+        <img src="https://3kqqxhpujh.ucarecd.net/e4d1d125-117f-4bbc-8a4f-8d3c1183ef55/logo.png" alt="lily book club logo"
+        width="200"/>
     </header>
-    <main layout:fragment="content">
-        <p>Loading...</p>
-    </main>
 
+    <main layout:fragment="content">
+        <p>Loading Content...</p>
+    </main>
     <footer>
-        <p>With love, Lilies💕</p>
+        <p >With love 💕</p>
+        <h4>The Lily book club Team</h4>
     </footer>
+   </div>
 </body>
 </html>
+

@@ -3,7 +3,6 @@ package com.lilybookclub.dto.request.club;
 import com.lilybookclub.enums.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +32,7 @@ public class CreateClubRequest {
     private String description;
 
     public String getNullableName() {
-        return StringUtils.isBlank(name) ? null : StringUtils.trim(name).toUpperCase();
+        return StringUtils.isBlank(name) ? null : StringUtils.trim(name);
     }
 
     public String getNullableCode() {
@@ -41,16 +40,9 @@ public class CreateClubRequest {
     }
 
     public String getNullableDescription() {
-        return StringUtils.isBlank(description) ? null : StringUtils.trim(description).toUpperCase();
+        return StringUtils.isBlank(description) ? null : StringUtils.trim(description);
     }
+
 
 }
 
-// Length must be six
-//add to all to all dto
-//add migration
-// add 550 error
-// interface projection
-// logs
-// filter query to get clubs by category
-// testing

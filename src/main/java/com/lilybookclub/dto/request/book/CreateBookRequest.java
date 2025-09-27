@@ -33,22 +33,22 @@ public class CreateBookRequest {
     private String description;
 
     public String getNullableTitle() {
-        return StringUtils.isBlank(title) ? null : StringUtils.trim(title).toUpperCase();
+        return StringUtils.isBlank(title) ? null : StringUtils.trim(title);
     }
 
     public String getNullableAuthor() {
-        return StringUtils.isBlank(author) ? null : StringUtils.trim(author).toUpperCase();
+        return StringUtils.isBlank(author) ? null : StringUtils.trim(author);
     }
 
     public String getNullableLink() {
-        return StringUtils.isBlank(link) ? null : StringUtils.trim(link).toUpperCase();
+        return StringUtils.isBlank(link) ? null : StringUtils.trim(link);
     }
 
     public String getNullableImageUrl() {
-        return StringUtils.isBlank(imageUrl) ? null : StringUtils.trim(imageUrl).toUpperCase();
+        return StringUtils.isBlank(imageUrl) ? null : StringUtils.trim(imageUrl);
     }
 
     public String getNullableDescription() {
-        return StringUtils.isBlank(description) ? null : StringUtils.trim(description).toUpperCase();
+        return StringUtils.isBlank(description) ? null : StringUtils.trim(description);
     }
 }

@@ -11,6 +11,7 @@ import com.lilybookclub.enums.Category;
 import com.lilybookclub.enums.DayOfTheWeek;
 import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
+import com.lilybookclub.mapper.ClubMapper;
 import com.lilybookclub.repository.ClubRepository;
 import com.lilybookclub.repository.UserClubRepository;
 import com.lilybookclub.repository.UserRepository;
@@ -32,11 +33,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class ClubServiceImpl implements ClubService {
+
     private final ClubRepository clubRepository;
     private final UserClubRepository userClubRepository;
     private final UserRepository userRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final EmailService emailService;
+    private final ClubMapper clubMapper;
 
     @Override
     public ClubModel createClub(CreateClubRequest createClubRequest){
@@ -56,13 +59,8 @@ public class ClubServiceImpl implements ClubService {
                 .build();
         clubRepository.save(club);
 
-        return ClubModel.builder()
-                .name(createClubRequest.getNullableName())
-                .code(createClubRequest.getNullableCode())
-                .category(createClubRequest.getCategory())
-                .readingDay(dayOfTheWeek.name())
-                .description(createClubRequest.getNullableDescription())
-                .build();
+        return clubMapper.toResponse(club, null);
+
     }
 
     @Override
@@ -71,15 +69,8 @@ public class ClubServiceImpl implements ClubService {
                    .map( result -> {
                             Club club = result.getClub();
                             Long memberCount = result.getMemberCount();
-                            return  ClubModel.builder()
-                           .name(club.getName())
-                            .code(club.getCode())
-                           .category(club.getCategory())
-                           .readingDay(club.getReadingDay().name())
-                           .description(club.getDescription())
-                           .membersCount(memberCount)
-                           .build();
-                   }
+                            return clubMapper.toResponse(club, memberCount);
+                           }
                    );
     }
 
@@ -90,14 +81,7 @@ public class ClubServiceImpl implements ClubService {
         Club club = clubWithMemberCount.getClub();
         Long memberCount = clubWithMemberCount.getMemberCount();
 
-        return ClubModel.builder()
-                .name(club.getName())
-                .code(club.getCode())
-                .category(club.getCategory())
-                .readingDay(club.getReadingDay().name())
-                .description(club.getDescription())
-                .membersCount(memberCount)
-                .build();
+        return clubMapper.toResponse(club, memberCount);
     }
 
     @Override
@@ -143,18 +127,16 @@ public class ClubServiceImpl implements ClubService {
           userClubRepository.save(userClub);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("name", user.getFirstname());
+        params.put("firstname", user.getFirstname());
         params.put("clubName", club.getName());
+        params.put("readingDay", club.getReadingDay().name().toLowerCase());
+        params.put("clubCategory", club.getCategory().name().toLowerCase());
+        params.put("clubCode", club.getCode());
+        params.put("clubDescription", club.getDescription());
+        params.put("totalMembers", memberCount);
         emailService.sendMail(user.getEmail(), "Welcome to Lily Book Club", "club-welcome", params);
 
-        return ClubModel.builder()
-                .name(club.getName())
-                .category(club.getCategory())
-                .code(club.getCode())
-                .readingDay(club.getReadingDay().name())
-                .description(club.getDescription())
-                .membersCount(memberCount)
-                .build();
+        return clubMapper.toResponse(club, memberCount);
     }
 
     private String deleteUserClub(String code, User user){
@@ -169,7 +151,6 @@ public class ClubServiceImpl implements ClubService {
 
         String name = club.getName();
         return String.format("User successfully removed from club: %s", name);
-
     }
 
     private Club checkIfClubExists(String code){

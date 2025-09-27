@@ -1,12 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{mail/layout}">
 <body>
+
    <div layout:fragment="content">
-      <p>Hello <span th:text="${name}"></span>,</p>
-      <h3>Welcome to lily book club</h3>
-      <p>Your club is <span th:text="${clubName}"></span></p>
+      <section class="main-content">
+         <h1>A World of Knowledge Awaits You 🌎 </h1>
+         <p class="tagline">Good Morning, <span th:text="${firstname}"></span></p>
+
+         <p class="pointer">Welcome to Club <span th:text="${clubName}"></span>!  We’re here to help you explore, learn, and grow in your interests in technology.</p>
+         <p class="pointer">Every <span th:text="${readingDay}"></span> by 7 am, we’ll send you a new curated book recommendation email for your club.</p>
+         <p class="pointer">Gear up to read, digest, learn, and discover something new every week!</p>
+
+         <h3>Other things to know about your club:</h3>
+
+         <ul>
+            <li >Club Category: <span th:text="${clubCategory}"></span></li>
+            <li >Club Code: <span th:text="${clubCode}"></span></li>
+            <li >Club Description: <span th:text="${clubDescription}"></span></li>
+            <li >Total Members: <span th:text="${totalMembers}"></span> Lilies</li>
+         </ul>
+
+         <div class="action-btn">
+            <button>
+               <a href="#">See upcoming books in your club</a>
+            </button>
+         </div>
+      </section>
    </div>
 </body>
 </html>

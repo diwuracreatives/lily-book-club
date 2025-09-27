@@ -10,6 +10,7 @@ import com.lilybookclub.enums.DayOfTheWeek;
 import com.lilybookclub.enums.Vote;
 import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
+import com.lilybookclub.mapper.BookMapper;
 import com.lilybookclub.repository.*;
 import com.lilybookclub.security.UserDetailsServiceImpl;
 import com.lilybookclub.service.BookService;
@@ -37,9 +38,9 @@ public class BookServiceImpl implements BookService {
       private final UserClubRepository userClubRepository;
       private final BookVoteRepository bookVoteRepository;
       private final UserDetailsServiceImpl userDetailsService;
-      private final RecommendedBookRepository recommendedBookRepository;
+      private final BookRequestRepository bookRequestRepository;
       private final EmailService emailService;
-
+      private final BookMapper bookMapper;
 
 
     private Book checkIfBookExists(Long bookId){
@@ -47,9 +48,9 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new NotFoundException("Book with this id not found"));
      }
 
-    private Club checkIfClubExists(Long clubId){
-        return clubRepository.findById(clubId)
-                .orElseThrow(() -> new NotFoundException("Club with this id not found"));
+    private Club checkIfClubExists(String clubCode){
+        return clubRepository.findByCode(clubCode)
+                .orElseThrow(() -> new NotFoundException("Club with this code not found"));
     }
 
     private Book createBook(CreateBookRequest createBookRequest){
@@ -64,39 +65,33 @@ public class BookServiceImpl implements BookService {
          return book;
      }
 
-     private String createClubBook(Long bookId, Long clubId){
+     private void createClubBook(Long bookId, String clubCode){
+
          ClubBook clubBook = ClubBook.builder()
                  .book(checkIfBookExists(bookId))
-                 .club(checkIfClubExists(clubId))
+                 .club(checkIfClubExists(clubCode))
                  .build();
          clubBookRepository.save(clubBook);
-
-         return String.format("Book: %s successfully added to club: %s", bookId, clubId);
      }
 
     @Override
      public BookModel addBookByAdmin(CreateBookRequest createBookRequest){
+           Book book = createBook(createBookRequest);
 
-           createBook(createBookRequest);
-           return BookModel.builder()
-                   .title(createBookRequest.getTitle())
-                   .author(createBookRequest.getAuthor())
-                   .link(createBookRequest.getLink())
-                   .imageUrl(createBookRequest.getImageUrl())
-                   .description(createBookRequest.getDescription())
-                   .build();
+           return bookMapper.toResponse(book, null, null);
      }
 
     @Override
      public String addBookToClub(CreateClubBookRequest createClubBookRequest){
-         return createClubBook(createClubBookRequest.getBookId(), createClubBookRequest.getClubId());
+        createClubBook(createClubBookRequest.getBookId(), createClubBookRequest.getNullableCode());
+        return String.format("Book: %s successfully added to club: %s", createClubBookRequest.getBookId(), createClubBookRequest.getNullableCode());
      }
 
     @Override
      public String removeBookFromClub(CreateClubBookRequest removeClubBookRequest){
 
           Book book = checkIfBookExists(removeClubBookRequest.getBookId());
-          Club club = checkIfClubExists(removeClubBookRequest.getClubId());
+          Club club = checkIfClubExists(removeClubBookRequest.getNullableCode());
 
           Optional<ClubBook> clubBook = clubBookRepository.findByClubAndBook(club, book);
 
@@ -105,7 +100,7 @@ public class BookServiceImpl implements BookService {
               clubBookRepository.save(clubBook.get());
           }
 
-          return String.format("Book: %s successfully removed from club: %s", removeClubBookRequest.getBookId(), removeClubBookRequest.getClubId());
+          return String.format("Book: %s successfully removed from club: %s", removeClubBookRequest.getBookId(), removeClubBookRequest.getNullableCode());
      }
 
     @Override
@@ -144,15 +139,8 @@ public class BookServiceImpl implements BookService {
          Long upvoteCount = bookWithUpvoteCount.getUpvoteCount();
          Long downvoteCount = bookWithUpvoteCount.getDownvoteCount();
 
-         return BookModel.builder()
-                 .title(book.getTitle())
-                 .author(book.getAuthor())
-                 .link(book.getLink())
-                 .imageUrl(book.getImageUrl())
-                 .description(book.getDescription())
-                 .upvoteCount(upvoteCount)
-                 .downvoteCount(downvoteCount)
-                 .build();
+          return bookMapper.toResponse(book, upvoteCount, downvoteCount);
+
      }
 
      public Page<BookModel> getBooks(Pageable pageable){
@@ -161,15 +149,7 @@ public class BookServiceImpl implements BookService {
                      Book book = result.getBook();
                      Long upvoteCount = result.getUpvoteCount();
                      Long downvoteCount = result.getDownvoteCount();
-                     return BookModel.builder()
-                             .title(book.getTitle())
-                             .author(book.getAuthor())
-                             .link(book.getLink())
-                             .imageUrl(book.getImageUrl())
-                             .description(book.getDescription())
-                             .upvoteCount(upvoteCount)
-                             .downvoteCount(downvoteCount)
-                             .build();
+                     return bookMapper.toResponse(book, upvoteCount, downvoteCount);
                  });
 
      }
@@ -186,7 +166,7 @@ public class BookServiceImpl implements BookService {
              throw new BadRequestException("User is not a member of this club");
          }
 
-         RecommendedBook recommendedBook = RecommendedBook.builder()
+         BookRequest bookRequest = BookRequest.builder()
                  .club(club)
                  .user(user)
                  .title(recommendBookRequest.getNullableTitle())
@@ -197,43 +177,40 @@ public class BookServiceImpl implements BookService {
                  .bookApprovalStatus(BookApprovalStatus.PENDING)
                  .build();
 
-         recommendedBookRepository.save(recommendedBook);
+         bookRequestRepository.save(bookRequest);
 
-         return BookModel.builder()
-                 .title(recommendBookRequest.getNullableTitle())
-                 .author(recommendBookRequest.getNullableAuthor())
-                 .link(recommendBookRequest.getNullableLink())
-                 .imageUrl(recommendBookRequest.getNullableImageUrl())
-                 .description(recommendBookRequest.getNullableDescription())
-                 .build();
+         return bookMapper.toDto(bookRequest);
+
      }
 
-     private RecommendedBook getRecommendedBook(Long recommendBookId){
-         return recommendedBookRepository.findById(recommendBookId)
+     private BookRequest getBookRequest(Long recommendBookId){
+         return bookRequestRepository.findById(recommendBookId)
                  .orElseThrow(() -> new NotFoundException("User Recommended Book with this id not found"));
      }
 
     @Override
      public String approveRecommendedBook(Long bookId){
-         RecommendedBook recommendedBook = getRecommendedBook(bookId);
 
-         if (recommendedBook.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
+         BookRequest bookRequest = getBookRequest(bookId);
+
+         if (bookRequest.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
+
              CreateBookRequest createBookRequest = new CreateBookRequest();
-             createBookRequest.setTitle(recommendedBook.getTitle());
-             createBookRequest.setLink(recommendedBook.getLink());
-             createBookRequest.setAuthor(recommendedBook.getAuthor());
-             createBookRequest.setImageUrl(recommendedBook.getImageUrl());
-             createBookRequest.setDescription(recommendedBook.getDescription());
+             createBookRequest.setTitle(bookRequest.getTitle());
+             createBookRequest.setLink(bookRequest.getLink());
+             createBookRequest.setAuthor(bookRequest.getAuthor());
+             createBookRequest.setImageUrl(bookRequest.getImageUrl());
+             createBookRequest.setDescription(bookRequest.getDescription());
 
              Book book = createBook(createBookRequest);
-             createClubBook(book.getId(), recommendedBook.getClub().getId());
+             createClubBook(book.getId(), bookRequest.getClub().getCode());
 
-             recommendedBook.setBookApprovalStatus(BookApprovalStatus.APPROVED);
-             recommendedBookRepository.save(recommendedBook);
+             bookRequest.setBookApprovalStatus(BookApprovalStatus.APPROVED);
+             bookRequestRepository.save(bookRequest);
          }
 
         return String.format("The recommended book: %s has been approved for Club %s.",
-                recommendedBook.getTitle(), recommendedBook.getClub().getName());
+                bookRequest.getTitle(), bookRequest.getClub().getName());
 
          //send email to user
      }
@@ -241,35 +218,32 @@ public class BookServiceImpl implements BookService {
      @Override
     public String rejectRecommendedBook(Long bookId){
 
-        RecommendedBook recommendedBook = getRecommendedBook(bookId);
+        BookRequest bookRequest = getBookRequest(bookId);
 
-         if (recommendedBook.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
-             recommendedBook.setBookApprovalStatus(BookApprovalStatus.REJECTED);
-             recommendedBookRepository.save(recommendedBook);
+         if (bookRequest.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
+             bookRequest.setBookApprovalStatus(BookApprovalStatus.REJECTED);
+             bookRequestRepository.save(bookRequest);
          }
 
         return String.format("The recommended book: %s has been rejected for Club %s.",
-                recommendedBook.getTitle(), recommendedBook.getClub().getName());
+                bookRequest.getTitle(), bookRequest.getClub().getName());
 
         //send email to user
     }
 
     public Page<BookModel> getAllUpcomingBooks(String code, Pageable pageable) {
+
         Club club = clubRepository.findByCode(code).orElseThrow(() -> new NotFoundException("Club with this code not found"));
+
         return clubBookRepository.findNextClubBook(club, PageRequest.of(0, 5))
                 .map(clubBook -> {
                     Book book = clubBook.getBook();
-                    return BookModel.builder()
-                            .title(book.getTitle())
-                            .author(book.getAuthor())
-                            .link(book.getLink())
-                            .imageUrl(book.getImageUrl())
-                            .description(book.getDescription())
-                            .build();
+                    return bookMapper.toResponse(book, null, null);
                 });
     }
 
     private Book getWeeklyRecommendedBook(Club club){
+
         ClubBook clubBook =  clubBookRepository.findNextClubBook(club, PageRequest.of(0, 1))
                 .stream()
                 .findFirst()
@@ -298,6 +272,8 @@ public class BookServiceImpl implements BookService {
                 params.put("bookTitle", book.getTitle());
                 params.put("bookAuthor", book.getAuthor());
                 params.put("bookLink", book.getLink());
+                params.put("bookImageUrl", book.getImageUrl());
+                params.put("bookDescription", book.getDescription());
                 params.put("clubName", club.getName());
                 params.put("firstname", user.getFirstname());
                 emailService.sendMail(user.getEmail(), "Your Weekly Book Recommendation is Here", "weekly-book", params);

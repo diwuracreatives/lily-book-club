@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.util.Map;
 
 
@@ -48,6 +51,7 @@ public class EmailServiceImpl implements EmailService {
         messageHelper.setTo(mailTo);
         messageHelper.setSubject(mailSubject);
         messageHelper.setText(emailContent, true);
+
         };
     try {
         mailSender.send(messagePreparator);
