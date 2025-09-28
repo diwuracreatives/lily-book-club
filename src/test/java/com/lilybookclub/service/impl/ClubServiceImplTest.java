@@ -7,7 +7,7 @@ import com.lilybookclub.entity.Club;
 import com.lilybookclub.enums.DayOfTheWeek;
 import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.repository.ClubRepository;
-import com.lilybookclub.util.ClubUtil;
+import com.lilybookclub.util.AppUtil;
 import com.lilybookclub.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,8 +44,8 @@ public class ClubServiceImplTest {
         when(clubRepository.existsByCode(createClubRequest.getNullableCode()))
                 .thenReturn(false);
 
-        try (MockedStatic<ClubUtil> mockedUtil = mockStatic(ClubUtil.class)) {
-            mockedUtil.when(ClubUtil::generateReadingDay)
+        try (MockedStatic<AppUtil> mockedUtil = mockStatic(AppUtil.class)) {
+            mockedUtil.when(AppUtil::generateReadingDay)
                     .thenReturn(DayOfTheWeek.MONDAY);
 
             when(clubRepository.save(any(Club.class)))

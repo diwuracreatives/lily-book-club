@@ -18,7 +18,7 @@ import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.UserDetailsServiceImpl;
 import com.lilybookclub.service.ClubService;
 import com.lilybookclub.service.EmailService;
-import com.lilybookclub.util.ClubUtil;
+import com.lilybookclub.util.AppUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -48,7 +48,7 @@ public class ClubServiceImpl implements ClubService {
             throw new BadRequestException("Club with this code already exists");
         }
 
-        DayOfTheWeek dayOfTheWeek = ClubUtil.generateReadingDay();
+        DayOfTheWeek dayOfTheWeek = AppUtil.generateReadingDay();
 
         Club club = Club.builder()
                 .name(createClubRequest.getNullableName())
@@ -126,6 +126,8 @@ public class ClubServiceImpl implements ClubService {
                   .build();
           userClubRepository.save(userClub);
 
+        String mailSubject = String.format("You’re now a member of %s club", club.getName().toLowerCase());
+
         Map<String, Object> params = new HashMap<>();
         params.put("firstname", user.getFirstname());
         params.put("clubName", club.getName());
@@ -134,7 +136,7 @@ public class ClubServiceImpl implements ClubService {
         params.put("clubCode", club.getCode());
         params.put("clubDescription", club.getDescription());
         params.put("totalMembers", memberCount);
-        emailService.sendMail(user.getEmail(), "Welcome to Lily Book Club", "club-welcome", params);
+        emailService.sendMail(user.getEmail(), mailSubject, "club-welcome", params);
 
         return clubMapper.toResponse(club, memberCount);
     }

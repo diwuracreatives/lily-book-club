@@ -25,6 +25,7 @@ import java.util.Map;
 @Tag(name = "Club Management", description = "Endpoints for managing club by user and admin")
 @SecurityRequirement(name="Bearer Authentication")
 public class ClubController {
+
     private final ClubService clubService;
 
     @PostMapping
@@ -42,7 +43,7 @@ public class ClubController {
 
     @GetMapping("/{clubCode}")
     @ResponseStatus(HttpStatus.OK)
-    public ClubModel getClubByCategory(@PathVariable String clubCode) {
+    public ClubModel getClubByCode(@PathVariable String clubCode) {
         return clubService.getClubByCode(clubCode);
     }
 

@@ -179,8 +179,16 @@ public class BookServiceImpl implements BookService {
 
          bookRequestRepository.save(bookRequest);
 
-         return bookMapper.toDto(bookRequest);
 
+         Map<String, Object> params = new HashMap<>();
+         params.put("bookTitle", recommendBookRequest.getNullableTitle());
+         params.put("bookAuthor", recommendBookRequest.getNullableAuthor());
+         params.put("bookDescription", recommendBookRequest.getNullableDescription());
+         params.put("clubName", club.getName());
+         params.put("firstname", user.getFirstname());
+         emailService.sendMail(user.getEmail(), "We've Received your Book Recommendation", "book-recommendation-pending", params);
+
+         return bookMapper.toDto(bookRequest);
      }
 
      private BookRequest getBookRequest(Long recommendBookId){
@@ -207,12 +215,19 @@ public class BookServiceImpl implements BookService {
 
              bookRequest.setBookApprovalStatus(BookApprovalStatus.APPROVED);
              bookRequestRepository.save(bookRequest);
+
+             Map<String, Object> params = new HashMap<>();
+             params.put("bookTitle", bookRequest.getTitle());
+             params.put("bookAuthor", bookRequest.getAuthor());
+             params.put("bookDescription", bookRequest.getDescription());
+             params.put("clubName", bookRequest.getClub().getName());
+             params.put("firstname", bookRequest.getUser().getFirstname());
+             emailService.sendMail(bookRequest.getUser().getEmail(), "Congrats!, Book Recommendation Approved", "book-recommendation-approved", params);
          }
 
         return String.format("The recommended book: %s has been approved for Club %s.",
                 bookRequest.getTitle(), bookRequest.getClub().getName());
 
-         //send email to user
      }
 
      @Override
@@ -223,12 +238,16 @@ public class BookServiceImpl implements BookService {
          if (bookRequest.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
              bookRequest.setBookApprovalStatus(BookApprovalStatus.REJECTED);
              bookRequestRepository.save(bookRequest);
+
+             Map<String, Object> params = new HashMap<>();
+             params.put("bookTitle", bookRequest.getTitle());
+             params.put("clubName", bookRequest.getClub().getName());
+             params.put("firstname", bookRequest.getUser().getFirstname());
+             emailService.sendMail(bookRequest.getUser().getEmail(), "Update on your Book Recommendation Request", "book-recommendation-rejected", params);
          }
 
         return String.format("The recommended book: %s has been rejected for Club %s.",
                 bookRequest.getTitle(), bookRequest.getClub().getName());
-
-        //send email to user
     }
 
     public Page<BookModel> getAllUpcomingBooks(String code, Pageable pageable) {

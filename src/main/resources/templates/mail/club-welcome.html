@@ -7,7 +7,7 @@
    <div layout:fragment="content">
       <section class="main-content">
          <h1>A World of Knowledge Awaits You 🌎 </h1>
-         <p class="tagline">Good Morning, <span th:text="${firstname}"></span></p>
+         <p class="tagline"><span th:text="${greeting}"></span>, <span th:text="${firstname}"></span></p>
 
          <p class="pointer">Welcome to Club <span th:text="${clubName}"></span>!  We’re here to help you explore, learn, and grow in your interests in technology.</p>
          <p class="pointer">Every <span th:text="${readingDay}"></span> by 7 am, we’ll send you a new curated book recommendation email for your club.</p>

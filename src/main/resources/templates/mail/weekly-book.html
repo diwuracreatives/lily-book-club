@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{mail/layout}">
 <body>
 
 <div layout:fragment="content">
-  <section class="main-content">
-    <h1>This Week’s Read for You ☀️</h1>
-  <p class="tagline">Good Morning, <span th:text="${firstname}"></span></p>
 
-  <p class="pointer">A new week, another great read! </p>
-  <p class="pointer">Check out the book we selected for club <span th:text="${clubName}"></span> this week.</p>
+  <section class="main-content">
+
+    <h1>This Week’s Read for You ☀️</h1>
+
+   <p class="tagline"><span th:text="${greeting}"></span>, <span th:text="${firstname}"></span></p>
+
+   <p class="pointer">A new week, another great read! </p>
+   <p class="pointer">Check out the book we selected for club <span th:text="${clubName}"></span> this week.</p>
 
   <div class="book-section">
     <img th:src="${bookImageUrl}" alt="a picture of book front poster" class="book-image"/>
@@ -19,7 +21,7 @@
       <span th:text="${bookTitle}"></span>
     </h2>
 
-    <p class="pointer" style="margin: 0"><span th:text="${bookAuthor}"></span></p>
+    <p class="pointer" style="margin: 0">By <span th:text="${bookAuthor}"></span></p>
 
     <div class="book-summary">
       <p class="pointer">Quick Summary:  <span th:text="${bookAuthor}"></span></p>

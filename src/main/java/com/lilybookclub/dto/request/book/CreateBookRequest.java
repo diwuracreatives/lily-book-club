@@ -13,23 +13,23 @@ import org.hibernate.validator.constraints.Length;
 public class CreateBookRequest {
 
     @NotBlank(message = "Book title is required")
-    @Length(min = 3, max = 50, message = "Book title must be between 3 and 50 characters")
+    @Length(min = 2, max = 250, message = "Book title must be between 3 and 50 characters")
     private String title;
 
     @NotBlank(message = "Book author is required")
-    @Length(min = 1, max = 60, message = "Book author must be between 1 and 60 characters")
+    @Length(min = 1, max = 250, message = "Book author must be between 1 and 250 characters")
     private String author;
 
     @NotBlank(message = "Book link is required")
-    @Length(min = 5, max = 100, message = "Book link must be between 5 and 100 characters")
+    @Length(min = 5, max = 150, message = "Book link must be between 5 and 150 characters")
     private String link;
 
     @NotBlank(message = "Book Image or Cover Url is required")
-    @Length(min = 5, max = 250, message = "Book Image or Cover Url must be at least 5 characters")
+    @Length(min = 5, max = 250, message = "Book Image or Cover Url must be between 5 and 250 characters")
     private String imageUrl;
 
     @NotBlank(message = "Book Description is required")
-    @Length(min = 5, max = 250, message = "Book Description must be at least 5 characters")
+    @Length(min = 5, max = 250, message = "Book Description must be between 5 and 250 characters")
     private String description;
 
     public String getNullableTitle() {

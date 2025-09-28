@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mail/layout}">
 <body>
+
+<div layout:fragment="content">
+
+    <section class="main-content">
+
+        <h1>Your Book Suggestion is Pending Approval️</h1>
+
+        <p class="tagline"><span th:text="${greeting}"></span>, <span th:text="${firstname}"></span></p>
+
+        <p class="pointer">Thank you for recommending book <span th:text="${bookTitle}" style="font-weight: bold"></span>  to Club <span th:text="${clubName}"></span>!
+          <br>Your contribution helps keep the reading cycle alive and
+            improves the learning experience for your fellow members.</p>
+
+        <p class="pointer">We have received your recommendation successfully!
+           <br> Our team will review it to ensure it’s suitable for your club,
+            <br>Once it’s approved, we’ll send you an update by email.</p>
+
+        <p class="pointer" style="margin-top: 40px">Thank you once again for taking the step to grow your club.
+            <br>If you have any questions, Kindly reach out to us via email.</p>
+
+        <div class="action-btn">
+            <button>
+                <a href="#">Recommend another book</a>
+            </button>
+        </div>
+
+    </section>
+</div>
 
 </body>
 </html>

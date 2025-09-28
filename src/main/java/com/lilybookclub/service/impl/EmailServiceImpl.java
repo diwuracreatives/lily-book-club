@@ -1,6 +1,7 @@
 package com.lilybookclub.service.impl;
 
 import com.lilybookclub.service.EmailService;
+import com.lilybookclub.util.AppUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,9 @@ public class EmailServiceImpl implements EmailService {
     @Async
     public void sendMail(String mailTo, String mailSubject, String templateLocation, Map<String, Object> params)  {
         Context context = new Context();
+        context.setVariable("greeting", AppUtil.getTimeGreeting());
         context.setVariables(params);
+
 
         String emailContent = templateEngine.process("mail/" + templateLocation, context);
         MimeMessagePreparator messagePreparator = mimeMessage -> {
