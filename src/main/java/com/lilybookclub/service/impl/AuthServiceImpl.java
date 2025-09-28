@@ -1,13 +1,14 @@
 package com.lilybookclub.service.impl;
 
-import com.lilybookclub.dto.request.LoginRequest;
-import com.lilybookclub.dto.request.SignUpRequest;
-import com.lilybookclub.dto.response.LoginResponse;
-import com.lilybookclub.dto.response.SignUpResponse;
+import com.lilybookclub.dto.request.user.LoginRequest;
+import com.lilybookclub.dto.request.user.SignUpRequest;
+import com.lilybookclub.dto.response.user.LoginResponse;
+import com.lilybookclub.dto.response.user.SignUpResponse;
 import com.lilybookclub.entity.User;
 import com.lilybookclub.enums.Role;
 import com.lilybookclub.exception.BadRequestException;
-import com.lilybookclub.exception.UserNotFoundException;
+import com.lilybookclub.exception.NotFoundException;
+import com.lilybookclub.mapper.UserMapper;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.jwt.JwtService;
 import com.lilybookclub.service.AuthService;
@@ -30,48 +31,49 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserMapper userMapper;
 
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest){
-          Boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getEmail());
+
+          boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getNullableEmail());
 
           if (userAccountExist){
-              throw new BadRequestException("Dear Lily, An account with this email address already exists");
+              throw new BadRequestException("An account with this email address already exists");
           }
 
-          String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+          String encodedPassword = passwordEncoder.encode(signUpRequest.getNullablePassword());
 
-          User user = new User();
-          user.setEmail(signUpRequest.getEmail());
-          user.setFirstname(signUpRequest.getFirstname());
-          user.setLastname(signUpRequest.getLastname());
-          user.setPassword(encodedPassword);
-          user.setRole(Role.USER);
-
+          User user = User.builder()
+                .email(signUpRequest.getNullableEmail())
+                .firstname(signUpRequest.getNullableFirstname())
+                .lastname(signUpRequest.getNullableLastname())
+                .password(encodedPassword)
+                .role(Role.USER)
+                .build();
           userRepository.save(user);
 
-           return SignUpResponse.builder()
-                .email(user.getEmail())
-                .firstname(user.getFirstname())
-                .build();
+           return userMapper.toResponse(user);
 
     }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest){
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new BadRequestException("Account with email address not found"));
 
-        return authenticateUser(loginRequest, user);
+        userRepository.findByEmail(loginRequest.getNullableEmail())
+                .orElseThrow(() -> new NotFoundException("Account with email address not found"));
+
+        return authenticateUser(loginRequest);
+
     }
 
-    private LoginResponse authenticateUser(LoginRequest loginRequest, User user) {
+    private LoginResponse authenticateUser(LoginRequest loginRequest) {
     try {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(), loginRequest.getPassword()));
+                        loginRequest.getNullableEmail(), loginRequest.getNullablePassword()));
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getNullableEmail());
         String jwtToken = jwtService.generateToken(userDetails);
 
         return LoginResponse.builder()
@@ -79,8 +81,8 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
     } catch (Exception ex) {
-        log.error("Authentication failed for {}. {}", loginRequest.getEmail(), ex.getMessage());
-        throw new UserNotFoundException(ex.getMessage());
+        log.error("Authentication failed for {}. {}", loginRequest.getNullableEmail(), ex.getMessage());
+        throw new NotFoundException(ex.getMessage());
     }
     }
 

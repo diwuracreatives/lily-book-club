@@ -1,7 +1,7 @@
 package com.lilybookclub.security.jwt;
 
-import com.lilybookclub.exception.UserNotFoundException;
-import com.lilybookclub.util.JwtConfig;
+import com.lilybookclub.exception.NotFoundException;
+import com.lilybookclub.config.JwtConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,16 +32,16 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
         try {
             final String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
 
-            String username = null;
+            Optional<String> username = Optional.empty();
             String jwt = null;
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
-                username = jwtService.extractUsername(jwt);
+                username = Optional.ofNullable(jwtService.extractUsername(jwt));
             }
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (username.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username.orElse(null));
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
             chain.doFilter(request, response);
         }catch (Exception err){
             log.error("Error: Invalid jwt token. {}", err.getMessage());
-            throw new UserNotFoundException("Error: Invalid jwt token");
+            throw new NotFoundException("Error: Invalid jwt token");
         }
     }
 }

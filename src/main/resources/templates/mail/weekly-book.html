@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mail/layout}">
+<body>
+
+<div layout:fragment="content">
+
+  <section class="main-content">
+
+    <h1>This Week’s Read for You ☀️</h1>
+
+   <p class="tagline"><span th:text="${greeting}"></span>, <span th:text="${firstname}"></span></p>
+
+   <p class="pointer">A new week, another great read! </p>
+   <p class="pointer">Check out the book we selected for club <span th:text="${clubName}"></span> this week.</p>
+
+  <div class="book-section">
+    <img th:src="${bookImageUrl}" alt="a picture of book front poster" class="book-image"/>
+    <h2 class="book-title">
+      <span th:text="${bookTitle}"></span>
+    </h2>
+
+    <p class="pointer" style="margin: 0">By <span th:text="${bookAuthor}"></span></p>
+
+    <div class="book-summary">
+      <p class="pointer">Quick Summary:  <span th:text="${bookAuthor}"></span></p>
+    </div>
+
+    <div class="action-btn">
+      <button>
+        <a th:href="${bookLink}">Read Book Now</a>
+      </button>
+    </div>
+
+    <div class="feedback">
+      <h3>Was this book a good read?</h3>
+      <p class="pointer">Your vote counts! Tell us about your experience reading this book.
+        Did you enjoy it? Would you recommend it?</p>
+
+      <div class="vote-row">
+        <a href="#">Upvote for yes</a>
+        <a href="#">Downvote for no </a>
+      </div>
+    </div>
+
+  </div>
+  </section>
+</div>
+
+</body>
+</html>
+

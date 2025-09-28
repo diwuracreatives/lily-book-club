@@ -1,5 +1,6 @@
 package com.lilybookclub.security.jwt;
 
+import com.lilybookclub.util.AppConstant;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,11 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 public class CustomAuditorAware implements AuditorAware<String> {
-    private static final String DEFAULT_SYSTEM_USER = "SYSTEM";
+
+    private static final String DEFAULT_SYSTEM_USER = AppConstant.DEFAULT_SYSTEM_USER;
 
     @Override
     @NonNull
     public Optional<String> getCurrentAuditor() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof UsernamePasswordAuthenticationToken token) {
