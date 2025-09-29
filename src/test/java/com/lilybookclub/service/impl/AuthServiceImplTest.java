@@ -9,6 +9,7 @@ import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.jwt.JwtService;
+import com.lilybookclub.service.UserService;
 import com.lilybookclub.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +56,12 @@ class AuthServiceImplTest {
     private JwtService jwtService;
 
 
+
     @InjectMocks
     private AuthServiceImpl authService;
+
+    @InjectMocks
+    private UserService userService;
 
     private SignUpRequest signUpRequest;
     private LoginRequest loginRequest;
@@ -76,7 +81,7 @@ class AuthServiceImplTest {
         Mockito.doReturn(mockedUser)
                 .when(userRepository).save(any(User.class));
 
-        SignUpResponse response = authService.signUp(signUpRequest);
+        SignUpResponse response = userService.signUp(signUpRequest);
 
         Assertions.assertEquals("LILY", response.getFirstname());
 
@@ -90,7 +95,7 @@ class AuthServiceImplTest {
         when(userRepository.existsByEmail(anyString()))
                 .thenReturn(true);
 
-        assertThatThrownBy(() -> authService.signUp(signUpRequest))
+        assertThatThrownBy(() -> userService.signUp(signUpRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("An account with this email address already exists");
     }

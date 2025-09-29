@@ -31,31 +31,6 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final UserMapper userMapper;
-
-    @Override
-    public SignUpResponse signUp(SignUpRequest signUpRequest){
-
-          boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getNullableEmail());
-
-          if (userAccountExist){
-              throw new BadRequestException("An account with this email address already exists");
-          }
-
-          String encodedPassword = passwordEncoder.encode(signUpRequest.getNullablePassword());
-
-          User user = User.builder()
-                .email(signUpRequest.getNullableEmail())
-                .firstname(signUpRequest.getNullableFirstname())
-                .lastname(signUpRequest.getNullableLastname())
-                .password(encodedPassword)
-                .role(Role.USER)
-                .build();
-          userRepository.save(user);
-
-           return userMapper.toResponse(user);
-
-    }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest){
