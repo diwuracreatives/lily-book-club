@@ -1,5 +1,6 @@
 package com.lilybookclub.dto.request.book;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,22 +33,27 @@ public class CreateBookRequest {
     @Length(min = 5, max = 250, message = "Book Description must be between 5 and 250 characters")
     private String description;
 
+    @JsonIgnore
     public String getNullableTitle() {
         return StringUtils.isBlank(title) ? null : StringUtils.trim(title);
     }
 
+    @JsonIgnore
     public String getNullableAuthor() {
         return StringUtils.isBlank(author) ? null : StringUtils.trim(author);
     }
 
+    @JsonIgnore
     public String getNullableLink() {
         return StringUtils.isBlank(link) ? null : StringUtils.trim(link);
     }
 
+    @JsonIgnore
     public String getNullableImageUrl() {
         return StringUtils.isBlank(imageUrl) ? null : StringUtils.trim(imageUrl);
     }
 
+    @JsonIgnore
     public String getNullableDescription() {
         return StringUtils.isBlank(description) ? null : StringUtils.trim(description);
     }

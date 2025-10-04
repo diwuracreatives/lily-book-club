@@ -1,7 +1,6 @@
 package com.lilybookclub.advice;
 
 import com.lilybookclub.enums.Category;
-import com.lilybookclub.exception.AccessDeniedException;
 import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.InternalServerErrorException;
 import com.lilybookclub.exception.NotFoundException;
@@ -56,7 +55,7 @@ public class ErrorControllerAdvice {
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponseEnvelope handleBadRequest(HttpMessageNotReadableException ex) {
+    public ApiResponseEnvelope handleMessageNotReadableRequest(HttpMessageNotReadableException ex) {
         log.error("Invalid club category in request. Error is : {}", ex.getMessage(), ex);
         return buildErrorResponse("Invalid club category provided. Accepted categories are: "
                 + Arrays.toString(Category.values()));

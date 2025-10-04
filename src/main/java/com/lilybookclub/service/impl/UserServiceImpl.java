@@ -1,6 +1,6 @@
 package com.lilybookclub.service.impl;
 
-import com.lilybookclub.config.AppConfig;
+import com.lilybookclub.config.AppConfiguration;
 import com.lilybookclub.dto.request.user.SignUpRequest;
 import com.lilybookclub.dto.response.user.SignUpResponse;
 import com.lilybookclub.entity.User;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-    private final AppConfig appConfig;
+    private final AppConfiguration appConfig;
 
 
     private User createUser(SignUpRequest signUpRequest, Role role){

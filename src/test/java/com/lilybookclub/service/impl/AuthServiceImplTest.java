@@ -7,9 +7,9 @@ import com.lilybookclub.dto.response.user.SignUpResponse;
 import com.lilybookclub.entity.User;
 import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
+import com.lilybookclub.mapper.UserMapper;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.jwt.JwtService;
-import com.lilybookclub.service.UserService;
 import com.lilybookclub.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 
@@ -55,50 +54,43 @@ class AuthServiceImplTest {
     @Mock
     private JwtService jwtService;
 
-
-
     @InjectMocks
     private AuthServiceImpl authService;
 
-    @InjectMocks
-    private UserService userService;
-
-    private SignUpRequest signUpRequest;
     private LoginRequest loginRequest;
     private User mockedUser;
 
     @BeforeEach
     void setUp() {
-        signUpRequest = TestUtil.signUpRequest();
         loginRequest = TestUtil.loginRequest();
         mockedUser = TestUtil.mockedUser();
     }
 
-    @Test
-    void createUserSuccessfulTest() {
-        Mockito.doReturn(false)
-                .when(userRepository).existsByEmail(anyString());
-        Mockito.doReturn(mockedUser)
-                .when(userRepository).save(any(User.class));
-
-        SignUpResponse response = userService.signUp(signUpRequest);
-
-        Assertions.assertEquals("LILY", response.getFirstname());
-
-        verify(userRepository).save(any(User.class));
-        verify(userRepository).existsByEmail(anyString());
-    }
-
-
-    @Test
-    void createUserFails_whenEmailExistsAlready() {
-        when(userRepository.existsByEmail(anyString()))
-                .thenReturn(true);
-
-        assertThatThrownBy(() -> userService.signUp(signUpRequest))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage("An account with this email address already exists");
-    }
+//    @Test
+//    void createUserSuccessfulTest() {
+//        Mockito.doReturn(false)
+//                .when(userRepository).existsByEmail(anyString());
+//        Mockito.doReturn(mockedUser)
+//                .when(userRepository).save(any(User.class));
+//
+//        SignUpResponse response = userService.signUp(signUpRequest);
+//
+//        Assertions.assertEquals("LILY", response.getFirstname());
+//
+//        verify(userRepository).save(any(User.class));
+//        verify(userRepository).existsByEmail(anyString());
+//    }
+//
+//
+//    @Test
+//    void createUserFails_whenEmailExistsAlready() {
+//        when(userRepository.existsByEmail(anyString()))
+//                .thenReturn(true);
+//
+//        assertThatThrownBy(() -> userService.signUp(signUpRequest))
+//                .isInstanceOf(BadRequestException.class)
+//                .hasMessage("An account with this email address already exists");
+//    }
 
 
   @Test

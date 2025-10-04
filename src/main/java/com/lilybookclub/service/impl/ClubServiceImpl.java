@@ -1,5 +1,6 @@
 package com.lilybookclub.service.impl;
 
+import com.lilybookclub.dto.request.club.ClubInterestRequest;
 import com.lilybookclub.dto.request.club.CreateClubRequest;
 import com.lilybookclub.dto.request.club.ClubActionByAdminRequest;
 import com.lilybookclub.dto.response.club.ClubModel;
@@ -18,6 +19,7 @@ import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.UserDetailsServiceImpl;
 import com.lilybookclub.service.ClubService;
 import com.lilybookclub.service.EmailService;
+import com.lilybookclub.service.GeminiService;
 import com.lilybookclub.util.AppUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,7 @@ public class ClubServiceImpl implements ClubService {
     private final UserRepository userRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final EmailService emailService;
+    private final GeminiService geminiService;
     private final ClubMapper clubMapper;
 
     @Override
@@ -64,8 +65,8 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public Page<ClubModel> getClubs(Category category, Pageable pageable){
-        return clubRepository.findAllWithMemberCount(category, pageable)
+    public Page<ClubModel> getClubs(List<Category> categories, Pageable pageable){
+        return clubRepository.findAllWithMemberCount(categories, pageable)
                    .map( result -> {
                             Club club = result.getClub();
                             Long memberCount = result.getMemberCount();
@@ -75,8 +76,20 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public ClubModel getClubByCode(String code){
+    public Page<ClubModel> getClubsByInterest(ClubInterestRequest clubInterestRequest, Pageable pageable){
 
+            String categoryResult = geminiService.getSuggestedCategories(clubInterestRequest.getNullableInterest());
+
+           List<Category> categories = Arrays.stream(categoryResult.split(" "))
+                .map(String::trim)
+                .map(Category::valueOf)
+                .toList();
+
+           return getClubs(categories, pageable);
+    }
+
+    @Override
+    public ClubModel getClubByCode(String code){
         ClubWithMemberCount clubWithMemberCount = getClubWithMemberCount(code);
         Club club = clubWithMemberCount.getClub();
         Long memberCount = clubWithMemberCount.getMemberCount();
@@ -111,7 +124,6 @@ public class ClubServiceImpl implements ClubService {
     }
 
     private ClubModel createUserClub(String code, User user){
-
         ClubWithMemberCount clubWithMemberCount = getClubWithMemberCount(code);
         Club club = clubWithMemberCount.getClub();
         Long memberCount = clubWithMemberCount.getMemberCount();

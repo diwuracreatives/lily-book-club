@@ -15,16 +15,33 @@
    <p class="pointer">A new week, another great read! </p>
    <p class="pointer">Check out the book we selected for club <span th:text="${clubName}"></span> this week.</p>
 
-  <div class="book-section">
-    <img th:src="${bookImageUrl}" alt="a picture of book front poster" class="book-image"/>
-    <h2 class="book-title">
+  <div class="book-section" style="display: flex;
+            flex-direction: column !important;
+            align-items: center;
+            justify-content: center;
+            margin-top: 40px;">
+    <img th:src="${bookImageUrl}" alt="a picture of book front poster" class="book-image" style=" width: 250px;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            border: 2px solid #F297BD;"/>
+
+    <h2 class="book-title" style=" font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            max-width: 400px;
+            line-height: 25px;">
       <span th:text="${bookTitle}"></span>
+
     </h2>
 
     <p class="pointer" style="margin: 0">By <span th:text="${bookAuthor}"></span></p>
 
-    <div class="book-summary">
-      <p class="pointer">Quick Summary:  <span th:text="${bookAuthor}"></span></p>
+    <div class="book-summary" style=" border: 1px solid #F297BD;
+            padding: 10px 10px;
+            text-align: center;
+            margin: 30px 25px;">
+      <p class="pointer">Quick Summary:  <span th:text="${bookSummary}"></span></p>
     </div>
 
     <div class="action-btn">
@@ -33,12 +50,14 @@
       </button>
     </div>
 
-    <div class="feedback">
+    <div class="feedback" style="margin-top: -35px;">
       <h3>Was this book a good read?</h3>
       <p class="pointer">Your vote counts! Tell us about your experience reading this book.
         Did you enjoy it? Would you recommend it?</p>
 
-      <div class="vote-row">
+      <div class="vote-row" style="     display: flex;
+            justify-content: space-between;
+            align-items: center;">
         <a href="#">Upvote for yes</a>
         <a href="#">Downvote for no </a>
       </div>

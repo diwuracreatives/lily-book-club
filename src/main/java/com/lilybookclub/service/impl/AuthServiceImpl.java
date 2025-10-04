@@ -1,14 +1,8 @@
 package com.lilybookclub.service.impl;
 
 import com.lilybookclub.dto.request.user.LoginRequest;
-import com.lilybookclub.dto.request.user.SignUpRequest;
 import com.lilybookclub.dto.response.user.LoginResponse;
-import com.lilybookclub.dto.response.user.SignUpResponse;
-import com.lilybookclub.entity.User;
-import com.lilybookclub.enums.Role;
-import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
-import com.lilybookclub.mapper.UserMapper;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.jwt.JwtService;
 import com.lilybookclub.service.AuthService;
@@ -18,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;

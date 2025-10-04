@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "jwt")
 @Data
 @NoArgsConstructor
-public class JwtConfig {
+public class JwtConfiguration {
     private String secretKey;
     private int expiryDuration;
     private String AuthorizationHeader = HttpHeaders.AUTHORIZATION;

@@ -1,5 +1,6 @@
 package com.lilybookclub.dto.request.club;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -22,6 +23,7 @@ public class ClubActionByAdminRequest {
     @Length(min = 6, max = 6, message = "Club code must be 6 characters")
     private String clubCode;
 
+    @JsonIgnore
     public String getNullableCode() {
         return StringUtils.isBlank(clubCode) ? null : StringUtils.trim(clubCode).toUpperCase();
     }

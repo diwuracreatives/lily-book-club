@@ -12,7 +12,7 @@ public class BookScheduler {
     private final BookService bookService;
 
     /* * send email to user to read book at 6am */
-    @Scheduled(cron = "0 11 20 * * *", zone = "Africa/Lagos")
+    @Scheduled(cron = "0 26 0 * * *", zone = "Africa/Lagos")
     public void sendUsersWeeklyBookRecommendations(){
         bookService.sendBookRecommendationEmail();
     }

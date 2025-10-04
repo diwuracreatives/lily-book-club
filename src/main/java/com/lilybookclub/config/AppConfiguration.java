@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-public class AppConfig {
+public class AppConfiguration {
 
     public List<SignUpRequest> adminUsers() {
         return List.of(

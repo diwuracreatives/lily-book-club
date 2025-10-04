@@ -1,5 +1,6 @@
 package com.lilybookclub.dto.request.book;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -22,6 +23,7 @@ public class CreateClubBookRequest {
     @Positive(message = "Book Id must be a positive number")
     private Long bookId;
 
+    @JsonIgnore
     public String getNullableCode() {
         return StringUtils.isBlank(clubCode) ? null : StringUtils.trim(clubCode).toUpperCase();
     }

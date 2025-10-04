@@ -1,7 +1,7 @@
 package com.lilybookclub.security.jwt;
 
 import com.lilybookclub.exception.NotFoundException;
-import com.lilybookclub.config.JwtConfig;
+import com.lilybookclub.config.JwtConfiguration;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
-    private final JwtConfig jwtConfig;
+    private final JwtConfiguration jwtConfig;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) {

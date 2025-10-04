@@ -1,6 +1,6 @@
 package com.lilybookclub.security.jwt;
 
-import com.lilybookclub.config.JwtConfig;
+import com.lilybookclub.config.JwtConfiguration;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private final JwtConfig jwtConfig;
+    private final JwtConfiguration jwtConfig;
 
     public String extractUsername(String token){
         return extractAllClaims(token).getSubject();

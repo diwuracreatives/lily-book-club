@@ -3,6 +3,7 @@ package com.lilybookclub.controller;
 import com.lilybookclub.dto.request.user.LoginRequest;
 import com.lilybookclub.dto.response.user.LoginResponse;
 import com.lilybookclub.service.AuthService;
+import com.lilybookclub.service.GeminiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,4 +26,5 @@ public class AuthController {
     public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest){
         return authService.login(loginRequest);
     }
+
 }

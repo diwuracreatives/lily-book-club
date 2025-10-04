@@ -1,5 +1,6 @@
 package com.lilybookclub.dto.request.club;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lilybookclub.enums.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,14 +32,17 @@ public class CreateClubRequest {
     @Length(min = 5, max = 250, message = "Club description must be between 5 and 250 characters ")
     private String description;
 
+    @JsonIgnore
     public String getNullableName() {
         return StringUtils.isBlank(name) ? null : StringUtils.trim(name);
     }
 
+    @JsonIgnore
     public String getNullableCode() {
         return StringUtils.isBlank(code) ? null : StringUtils.trim(code).toUpperCase();
     }
 
+    @JsonIgnore
     public String getNullableDescription() {
         return StringUtils.isBlank(description) ? null : StringUtils.trim(description);
     }

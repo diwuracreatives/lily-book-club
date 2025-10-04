@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ClubRepository extends JpaRepository<Club,Long> {
@@ -21,11 +22,10 @@ public interface ClubRepository extends JpaRepository<Club,Long> {
         SELECT c AS club, COUNT(uc) AS memberCount
         FROM Club c
         LEFT JOIN UserClub uc ON uc.club = c
-        WHERE (:category IS NULL OR c.category = :category)
+        WHERE (:categories IS NULL OR c.category IN (:categories))
         GROUP BY c
         """)
-       Page<ClubWithMemberCount> findAllWithMemberCount(@Param("category") Category category, Pageable pageable);
-
+      Page<ClubWithMemberCount> findAllWithMemberCount(@Param("categories") List<Category> categories, Pageable pageable);
 
       @Query("""
         SELECT c as club, COUNT(uc) as memberCount

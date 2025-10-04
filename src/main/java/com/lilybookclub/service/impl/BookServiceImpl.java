@@ -15,6 +15,7 @@ import com.lilybookclub.repository.*;
 import com.lilybookclub.security.UserDetailsServiceImpl;
 import com.lilybookclub.service.BookService;
 import com.lilybookclub.service.EmailService;
+import com.lilybookclub.service.GeminiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,7 @@ public class BookServiceImpl implements BookService {
       private final UserDetailsServiceImpl userDetailsService;
       private final BookRequestRepository bookRequestRepository;
       private final EmailService emailService;
+      private final GeminiService geminiService;
       private final BookMapper bookMapper;
 
 
@@ -179,7 +181,6 @@ public class BookServiceImpl implements BookService {
 
          bookRequestRepository.save(bookRequest);
 
-
          Map<String, Object> params = new HashMap<>();
          params.put("bookTitle", recommendBookRequest.getNullableTitle());
          params.put("bookAuthor", recommendBookRequest.getNullableAuthor());
@@ -278,6 +279,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void sendBookRecommendationEmail(){
+
         DayOfTheWeek today = DayOfTheWeek.valueOf(LocalDate.now().getDayOfWeek().name().toUpperCase());
         List<UserClub> userClubs = userClubRepository.findByClubReadingDay(today);
 
@@ -287,12 +289,15 @@ public class BookServiceImpl implements BookService {
             Book book = getWeeklyRecommendedBook(club);
 
             if (book != null) {
+
+                String bookSummary = geminiService.getBookSummary(book.getTitle(), book.getAuthor());
+
                 Map<String, Object> params = new HashMap<>();
                 params.put("bookTitle", book.getTitle());
                 params.put("bookAuthor", book.getAuthor());
                 params.put("bookLink", book.getLink());
                 params.put("bookImageUrl", book.getImageUrl());
-                params.put("bookDescription", book.getDescription());
+                params.put("bookSummary", bookSummary);
                 params.put("clubName", club.getName());
                 params.put("firstname", user.getFirstname());
                 emailService.sendMail(user.getEmail(), "Your Weekly Book Recommendation is Here", "weekly-book", params);
