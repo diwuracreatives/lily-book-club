@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,7 +32,7 @@ public class BookController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all books", description = "See all books available to read")
-    public Page<BookModel> getBooks(@PageableDefault(sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
+    public Page<BookModel> getBooks(@ParameterObject @PageableDefault(sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
         return bookService.getBooks(pageable);
     }
 
@@ -46,7 +47,7 @@ public class BookController {
     @GetMapping("club/{clubCode}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all books to read", description = "See a list of all upcoming books to read in a club")
-    public Page<BookModel> get(@PathVariable String clubCode, @PageableDefault(sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
+    public Page<BookModel> get(@PathVariable String clubCode, @ParameterObject @PageableDefault(sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
         return bookService.getAllUpcomingBooks(clubCode, pageable);
     }
 

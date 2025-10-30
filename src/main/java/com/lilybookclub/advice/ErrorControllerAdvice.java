@@ -93,7 +93,7 @@ public class ErrorControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponseEnvelope handleServerError(Exception ex) {
         log.error("ErrorException. Error is : {}", ex.getMessage(), ex);
-        return buildErrorResponse("An Error occurred, Something went wrong on our end.");
+        return buildErrorResponse("An Error occurred");
     }
 
 }

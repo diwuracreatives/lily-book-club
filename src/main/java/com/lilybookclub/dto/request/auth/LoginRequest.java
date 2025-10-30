@@ -1,4 +1,4 @@
-package com.lilybookclub.dto.request.user;
+package com.lilybookclub.dto.request.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lilybookclub.util.AppConstant;

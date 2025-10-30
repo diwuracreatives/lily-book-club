@@ -1,23 +1,17 @@
 package com.lilybookclub.service.impl;
 
-import com.lilybookclub.dto.request.user.LoginRequest;
-import com.lilybookclub.dto.request.user.SignUpRequest;
-import com.lilybookclub.dto.response.user.LoginResponse;
-import com.lilybookclub.dto.response.user.SignUpResponse;
+import com.lilybookclub.dto.request.auth.LoginRequest;
+import com.lilybookclub.dto.response.auth.LoginResponse;
 import com.lilybookclub.entity.User;
-import com.lilybookclub.exception.BadRequestException;
 import com.lilybookclub.exception.NotFoundException;
-import com.lilybookclub.mapper.UserMapper;
 import com.lilybookclub.repository.UserRepository;
 import com.lilybookclub.security.jwt.JwtService;
 import com.lilybookclub.util.TestUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +43,7 @@ class AuthServiceImplTest {
     private UserDetails usersDetails;
 
     @Mock
-    private  UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Mock
     private JwtService jwtService;
@@ -58,6 +52,7 @@ class AuthServiceImplTest {
     private AuthServiceImpl authService;
 
     private LoginRequest loginRequest;
+
     private User mockedUser;
 
     @BeforeEach
@@ -123,7 +118,7 @@ class AuthServiceImplTest {
             LoginResponse response = authService.login(loginRequest);
 
             assertThat(response).isNotNull();
-            assertThat(response.getToken()).isEqualTo("ey132jnjaejbvehj55nmdfn44");
+            assertThat(response.getJwtToken()).isEqualTo("ey132jnjaejbvehj55nmdfn44");
 
             verify(userRepository).findByEmail(loginRequest.getNullableEmail());
             verify(userDetailsService).loadUserByUsername(loginRequest.getNullableEmail());

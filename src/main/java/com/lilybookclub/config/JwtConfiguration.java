@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class JwtConfiguration {
     private String secretKey;
     private int expiryDuration;
+    private int refreshTokenExpiryDuration;
     private String AuthorizationHeader = HttpHeaders.AUTHORIZATION;
 }
 

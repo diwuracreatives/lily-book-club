@@ -1,4 +1,4 @@
-package com.lilybookclub.security.jwt;
+package com.lilybookclub.security;
 
 import com.lilybookclub.util.AppConstant;
 import org.springframework.data.domain.AuditorAware;
@@ -22,6 +22,7 @@ public class CustomAuditorAware implements AuditorAware<String> {
         if (authentication instanceof UsernamePasswordAuthenticationToken token) {
             return Optional.of(token.getName());
         }
+
         return Optional.of(DEFAULT_SYSTEM_USER);
     }
 

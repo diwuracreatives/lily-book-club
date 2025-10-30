@@ -30,6 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return userRepository.findByEmail(loggedInUser)
                 .orElseThrow(()
-                        -> new NotFoundException("Logged in User not found"));
+                        -> new NotFoundException("Logged in user not found"));
     }
 }

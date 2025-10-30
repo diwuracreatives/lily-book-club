@@ -64,3 +64,4 @@ ALTER TABLE book_vote
 UPDATE book_vote
 SET status = 'ACTIVE'
 WHERE status = 0;
+

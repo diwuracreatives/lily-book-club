@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.StringSchema;
+import org.springdoc.core.customizers.ParameterCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,5 +24,6 @@ public class SwaggerConfiguration {
                 .title("LilyBookClub🌸")
                 .description("LilyBookClub API")
                 .version("1.0"));
+
     }
 }

@@ -1,5 +1,6 @@
 package com.lilybookclub.mapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.lilybookclub.dto.response.book.BookModel;
 import com.lilybookclub.entity.Book;
 import com.lilybookclub.entity.BookRequest;
@@ -14,6 +15,7 @@ public interface BookMapper {
             @Mapping(target = "upvoteCount", source = "upvoteCount"),
             @Mapping(target = "downvoteCount", source = "downvoteCount")
     })
+
     BookModel toResponse(Book book, Long upvoteCount, Long downvoteCount);
 
     BookModel toDto(BookRequest recommendedBook);

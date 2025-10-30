@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface UserClubRepository extends JpaRepository<UserClub,Long> {
       boolean existsByUserAndClub(User user, Club club);
       Optional<UserClub> findByUserAndClub(User user, Club club);
-      void deleteByUserAndClub(User user, Club club);
       List<UserClub> findByClubReadingDay(DayOfTheWeek dayOfTheWeek);
 }

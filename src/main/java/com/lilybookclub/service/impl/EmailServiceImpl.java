@@ -32,12 +32,15 @@ public class EmailServiceImpl implements EmailService {
     @Value("${mail.name}")
     private String mailName;
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     @Async
     public void sendMail(String mailTo, String mailSubject, String templateLocation, Map<String, Object> params)  {
         Context context = new Context();
         context.setVariable("greeting", AppUtil.getTimeGreeting());
+        context.setVariable("baseUrl", baseUrl);
         context.setVariables(params);
-
 
         String emailContent = templateEngine.process("mail/" + templateLocation, context);
         MimeMessagePreparator messagePreparator = mimeMessage -> {

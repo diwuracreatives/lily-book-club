@@ -2,7 +2,6 @@ package com.lilybookclub.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;

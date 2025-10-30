@@ -1,10 +1,11 @@
 package com.lilybookclub.controller;
 
-import com.lilybookclub.dto.request.user.LoginRequest;
-import com.lilybookclub.dto.response.user.LoginResponse;
+import com.lilybookclub.dto.request.auth.*;
+import com.lilybookclub.dto.response.auth.LoginResponse;
 import com.lilybookclub.service.AuthService;
-import com.lilybookclub.service.GeminiService;
+import com.lilybookclub.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
@@ -27,4 +29,40 @@ public class AuthController {
         return authService.login(loginRequest);
     }
 
+    @PostMapping("/refresh")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Refresh Auth tokens", description = "Refresh Auth tokens")
+    public LoginResponse refresh(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest){
+        return authService.refreshToken(refreshTokenRequest);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    @SecurityRequirement(name="Bearer Authentication")
+    @Operation(summary = "Log out of your Account", description = "Log out of your account")
+    public void logout(){refreshTokenService.deleteRefreshToken();
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Forgot account password", description = "Forgot account password")
+    public void forgotPassword(@RequestBody @Valid ForgotPasswordRequest forgotPasswordRequest){
+         authService.forgotPassword(forgotPasswordRequest);
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.OK)
+    @SecurityRequirement(name="Bearer Authentication")
+    @Operation(summary = "Reset password", description = "Reset password")
+    public void resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest){
+        authService.resetPassword(resetPasswordRequest);
+    }
+
+    @PostMapping("/reset-password/user")
+    @ResponseStatus(HttpStatus.OK)
+    @SecurityRequirement(name="Bearer Authentication")
+    @Operation(summary = "Reset password by logged in user", description = "Reset password by logged in user")
+    public void resetPasswordByLoggedInUser(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        authService.resetPasswordByLoggedInUser(changePasswordRequest);
+    }
 }

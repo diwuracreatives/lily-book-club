@@ -1,4 +1,4 @@
-package com.lilybookclub.dto.response.user;
+package com.lilybookclub.dto.response.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginResponse {
-    private String token;
+    private String jwtToken;
+    private String refreshToken;
 }

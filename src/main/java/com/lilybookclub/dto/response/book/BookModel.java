@@ -23,7 +23,7 @@ public class BookModel {
 
     private String description;
 
-    private long upvoteCount;
+    private Long upvoteCount;
 
-    private long downvoteCount;
+    private Long downvoteCount;
 }

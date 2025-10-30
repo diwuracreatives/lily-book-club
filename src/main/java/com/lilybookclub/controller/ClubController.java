@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -42,8 +43,16 @@ public class ClubController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all clubs", description = "See all clubs available to join")
-    public Page<ClubModel> getClubs(@RequestParam(value = "categories", required = false) List<Category> categories, @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+    public Page<ClubModel> getClubs(@RequestParam(value = "categories", required = false) List<Category> categories,
+                                    @ParameterObject @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
         return clubService.getClubs(categories, pageable);
+    }
+
+    @PostMapping("/ai-suggestion")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all suggested club", description = "Add interest to see all clubs suggested by gemini AI")
+    public Page<ClubModel> getSuggestedClubs(@RequestBody @Valid ClubInterestRequest clubInterestRequest, @ParameterObject @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        return clubService.getClubsByInterest(clubInterestRequest, pageable);
     }
 
     @GetMapping("/{clubCode}")
@@ -51,13 +60,6 @@ public class ClubController {
     @Operation(summary = "Get a club", description = "Get a club by club code")
     public ClubModel getClubByCode(@PathVariable String clubCode) {
         return clubService.getClubByCode(clubCode);
-    }
-
-    @PostMapping("/ai-suggestion")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all suggested club", description = "See all clubs suggested by gemini AI by interest")
-    public Page<ClubModel> getSuggestedClubs(@RequestBody @Valid ClubInterestRequest clubInterestRequest, @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-        return clubService.getClubsByInterest(clubInterestRequest, pageable);
     }
 
     @PostMapping("/{clubCode}/join")

@@ -1,8 +1,8 @@
 package com.lilybookclub.util;
 
-import com.lilybookclub.dto.request.book.CreateBookRequest;
+import com.lilybookclub.dto.request.auth.ForgotPasswordRequest;
+import com.lilybookclub.dto.request.auth.LoginRequest;
 import com.lilybookclub.dto.request.club.CreateClubRequest;
-import com.lilybookclub.dto.request.user.LoginRequest;
 import com.lilybookclub.dto.request.user.SignUpRequest;
 import com.lilybookclub.entity.Club;
 import com.lilybookclub.entity.User;

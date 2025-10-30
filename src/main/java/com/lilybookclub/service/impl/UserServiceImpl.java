@@ -26,7 +26,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final AppConfiguration appConfig;
 
-
     private User createUser(SignUpRequest signUpRequest, Role role){
 
         boolean userAccountExist = userRepository.existsByEmail(signUpRequest.getNullableEmail());
@@ -53,7 +52,6 @@ public class UserServiceImpl implements UserService {
         User user = createUser(signUpRequest, Role.USER);
         return userMapper.toResponse(user);
     }
-
 
     @EventListener(ApplicationReadyEvent.class)
     public void createDefaultAdminUsers() {

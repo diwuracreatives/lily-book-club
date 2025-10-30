@@ -55,6 +55,17 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new NotFoundException("Club with this code not found"));
     }
 
+    private User checkIfUserExistsInClub(Club club) {
+
+        User user = userDetailsService.getLoggedInUser();
+
+        if (!userClubRepository.existsByUserAndClub(user, club)) {
+            throw new BadRequestException("User is not a member of this club");
+        }
+
+        return user;
+    }
+
     private Book createBook(CreateBookRequest createBookRequest){
          Book book = Book.builder()
                  .title(createBookRequest.getNullableTitle())
@@ -118,6 +129,7 @@ public class BookServiceImpl implements BookService {
      private BookModel bookAction(Long bookId, Vote vote){
 
          Book book = checkIfBookExists(bookId);
+
          User user = userDetailsService.getLoggedInUser();
 
          Optional <BookVote> bookVote = bookVoteRepository.findByUserAndBook(user, book);
@@ -153,20 +165,14 @@ public class BookServiceImpl implements BookService {
                      Long downvoteCount = result.getDownvoteCount();
                      return bookMapper.toResponse(book, upvoteCount, downvoteCount);
                  });
-
      }
 
     @Override
      public BookModel recommendBook(CreateBookRequest recommendBookRequest, String clubCode){
 
-         Club club = clubRepository.findByCode(clubCode)
-                 .orElseThrow(() -> new NotFoundException("Club with this code not found"));
+         Club club = checkIfClubExists(clubCode);
 
-         User user = userDetailsService.getLoggedInUser();
-
-         if (!userClubRepository.existsByUserAndClub(user, club)){
-             throw new BadRequestException("User is not a member of this club");
-         }
+         User user = checkIfUserExistsInClub(club);
 
          BookRequest bookRequest = BookRequest.builder()
                  .club(club)
@@ -253,7 +259,9 @@ public class BookServiceImpl implements BookService {
 
     public Page<BookModel> getAllUpcomingBooks(String code, Pageable pageable) {
 
-        Club club = clubRepository.findByCode(code).orElseThrow(() -> new NotFoundException("Club with this code not found"));
+        Club club = checkIfClubExists(code);
+
+        checkIfUserExistsInClub(club);
 
         return clubBookRepository.findNextClubBook(club, PageRequest.of(0, 5))
                 .map(clubBook -> {
@@ -274,6 +282,7 @@ public class BookServiceImpl implements BookService {
             clubBookRepository.save(clubBook);
             return clubBook.getBook();
         }
+
         return null;
     }
 
@@ -289,7 +298,6 @@ public class BookServiceImpl implements BookService {
             Book book = getWeeklyRecommendedBook(club);
 
             if (book != null) {
-
                 String bookSummary = geminiService.getBookSummary(book.getTitle(), book.getAuthor());
 
                 Map<String, Object> params = new HashMap<>();
