@@ -1,6 +1,6 @@
 package com.lilybookclub.security.jwt;
 
-import com.lilybookclub.util.JwtConfig;
+import com.lilybookclub.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -34,10 +34,6 @@ public class JwtService {
     public Date extractExpiration(String token){
         return extractAllClaims(token).getExpiration();
     }
-
-//    public List<String> extractRoles(String token) {
-//        return extractAllClaims(token).get("roles", List.class);
-//    }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
         final Claims claims = extractAllClaims(token);

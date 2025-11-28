@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mail/layout}">
+<body>
+<div layout:fragment="content">
+  <p>Hello <span th:text="${firstname}"></span>,</p>
+  <h3>Welcome to lily book club</h3>
+  <p>Your club <span th:text="${clubName}"></span> reading is today!</p>
+  <h3>Book Details</h3>
+  <p>Book Title: <span th:text="${bookTitle}"></span></p>
+  <p>Book Author: <span th:text="${bookAuthor}"></span></p>
+  <p>Book Link: <span th:text="${bookLink}"></span></p>
+</div>
+</body>
+</html>
+
