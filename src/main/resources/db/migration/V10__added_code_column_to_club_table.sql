@@ -1,0 +1,3 @@
+
+ALTER TABLE clubs
+ADD COLUMN code VARCHAR(10)

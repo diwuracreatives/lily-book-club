@@ -1,6 +1,6 @@
 package com.lilybookclub.security.jwt;
 
-import com.lilybookclub.util.JwtConfig;
+import com.lilybookclub.config.JwtConfiguration;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,24 +23,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private final JwtConfig jwtConfig;
+    private final JwtConfiguration jwtConfig;
 
     public String extractUsername(String token){
         return extractAllClaims(token).getSubject();
     }
-
-    public Date extractExpiration(String token){
-        return extractAllClaims(token).getExpiration();
-    }
-
-//    public List<String> extractRoles(String token) {
-//        return extractAllClaims(token).get("roles", List.class);
-//    }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    };
 
     public Claims extractAllClaims(String token) {
         Key key = Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes(StandardCharsets.UTF_8));
@@ -79,10 +64,11 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now()
-                        .plusDays(jwtConfig.getExpiryDuration())))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiryDuration()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+
 
 }

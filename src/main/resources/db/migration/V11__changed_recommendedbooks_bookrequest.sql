@@ -1,0 +1,1 @@
+ALTER TABLE recommended_books RENAME TO book_requests;
