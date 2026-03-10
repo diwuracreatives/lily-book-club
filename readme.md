@@ -40,6 +40,5 @@ spring-boot:run
 ```
 
 ## Demo Link
-https://lily-book-club.onrender.com
-
+https://lilybookclub.boluwatifeadediwura.xyz/swagger-ui/index.html
 ---
