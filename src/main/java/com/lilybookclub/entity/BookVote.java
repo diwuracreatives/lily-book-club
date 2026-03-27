@@ -2,15 +2,13 @@ package com.lilybookclub.entity;
 
 import com.lilybookclub.enums.Vote;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "book_vote", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "book_id"}) })
+@Table(name = "book_votes", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "book_id"}) })
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookVote extends BaseEntity{
@@ -25,3 +23,4 @@ public class BookVote extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Vote vote;
 }
+

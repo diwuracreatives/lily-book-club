@@ -1,0 +1,36 @@
+ALTER TABLE clubs
+DROP FOREIGN KEY fk_club_category;
+
+ALTER TABLE clubs
+DROP COLUMN category_id;
+
+DROP TABLE club_categories;
+
+ALTER TABLE users
+DROP COLUMN status,
+ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE clubs
+DROP COLUMN status,
+DROP COLUMN code,
+DROP COLUMN reading_day,
+ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE,
+ADD COLUMN reading_day VARCHAR(12),
+ADD COLUMN category VARCHAR(100),
+ADD COLUMN description VARCHAR(255);
+
+ALTER TABLE books
+DROP COLUMN status,
+ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE club_books
+DROP COLUMN status,
+ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE user_clubs
+DROP COLUMN status,
+ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE book_votes
+DROP COLUMN status,
+ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;

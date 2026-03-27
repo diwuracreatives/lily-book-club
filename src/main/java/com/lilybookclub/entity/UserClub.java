@@ -1,15 +1,15 @@
 package com.lilybookclub.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name = "user_club", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@Table(name = "user_clubs", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@SQLRestriction("is_deleted = false")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserClub extends BaseEntity{

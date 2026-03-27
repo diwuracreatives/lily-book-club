@@ -1,11 +1,16 @@
 package com.lilybookclub.enums;
 
 public enum Category {
-    JAVA,
-    PYTHON,
-    KOTLIN,
-    SWIFT,
-    JAVASCRIPT,
-    GOLANG,
-    RUBY
+    TECHNOLOGY,
+    POLITICS,
+    MEDICINE,
+    FINANCE,
+    ROMANCE,
+    SCIENCE,
+    HISTORY,
+    COOKING,
+    MUSIC,
+    ARTS,
+    BIOGRAPHY,
+    ENGINEERING
 }
