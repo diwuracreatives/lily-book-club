@@ -140,7 +140,7 @@ public class AuthServiceImpl implements AuthService {
         saveNewPassword(changePasswordRequest.getNullableNewPassword(), user);
     }
 
-    // rate limiting, deploy
+    // rate limiting
 
 }
 

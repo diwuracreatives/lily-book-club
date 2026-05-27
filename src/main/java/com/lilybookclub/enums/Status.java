@@ -1,7 +1,7 @@
 package com.lilybookclub.enums;
 
-public enum BookApprovalStatus {
+public enum Status {
     PENDING,
     APPROVED,
-    REJECTED,
+    REJECTED
 }

@@ -38,6 +38,13 @@ public class ErrorControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = BadRequestException.class)
+    public ApiResponseEnvelope handleBadRequest(BadRequestException ex) {
+        log.error("BadRequestException. Error is : {}", ex.getMessage(), ex);
+        return buildErrorResponse(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ApiResponseEnvelope handleValidationExceptions(MethodArgumentNotValidException ex) {
 
@@ -59,13 +66,6 @@ public class ErrorControllerAdvice {
         log.error("Invalid club category in request. Error is : {}", ex.getMessage(), ex);
         return buildErrorResponse("Invalid club category provided. Accepted categories are: "
                 + Arrays.toString(Category.values()));
-    }
-
-    @ExceptionHandler(value = BadRequestException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponseEnvelope handleBadRequest(BadRequestException ex) {
-        log.error("BadRequestException. Error is : {}", ex.getMessage(), ex);
-        return buildErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(value = NotFoundException.class)

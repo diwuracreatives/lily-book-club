@@ -37,7 +37,7 @@ public class ClubController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a club", description = "Create a new club")
     public ClubModel createClub(@RequestBody @Valid CreateClubRequest createClubRequest) {
-        return clubService.createClub(createClubRequest);
+        return clubService.createClubByAdmin(createClubRequest);
     }
 
     @GetMapping
@@ -47,6 +47,21 @@ public class ClubController {
                                     @ParameterObject @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
         return clubService.getClubs(categories, pageable);
     }
+
+    @PostMapping("/requests")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Create a club by user", description = "Request for a new club")
+    public ClubModel createClubByUser(@RequestBody @Valid CreateClubRequest createClubRequest) {
+        return clubService.requestClub(createClubRequest);
+    }
+
+//    @PostMapping("/requests/approve/{clubRequestId}")
+//    @ResponseStatus(HttpStatus.OK)
+//    @Operation(summary = "Approve club request by admin", description = "Approve club request by admin")
+//    public Map<String, String> approveClubByAdmin(@PathVariable Long clubRequestId) {
+//        String message = clubService.approveClubRequest(clubRequestId);
+//        return Map.of("message", message);
+//    }
 
     @PostMapping("/ai-suggestion")
     @ResponseStatus(HttpStatus.OK)
@@ -80,9 +95,9 @@ public class ClubController {
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Add user to a club", description = "Add user to a club by admin")
+    @Operation(summary = "Add admin user to a club", description = "Add user to a club as an admin")
     public ClubModel joinClubByAdmin(@RequestBody @Valid ClubActionByAdminRequest clubActionByAdminRequest) {
-        return  clubService.joinClubByAdmin(clubActionByAdminRequest);
+        return clubService.joinClubByAdmin(clubActionByAdminRequest);
     }
 
     @DeleteMapping("/admin")

@@ -1,6 +1,5 @@
 package com.lilybookclub.mapper;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.lilybookclub.dto.response.book.BookModel;
 import com.lilybookclub.entity.Book;
 import com.lilybookclub.entity.BookRequest;

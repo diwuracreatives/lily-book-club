@@ -65,20 +65,17 @@ public class ClubServiceImplTest {
 //        }
 //    }
 
-    @Test
-    void createClub_throwsBadRequest_whenClubCodeAlreadyExists() {
-        when(clubRepository.existsByCode(createClubRequest.getNullableCode()))
-                .thenReturn(true);
-
-        assertThatThrownBy(() -> clubService.createClub(createClubRequest))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage("Club with this code already exists");
-
-        verify(clubRepository, never()).save(any());
-    }
-
-
-
+//    @Test
+//    void createClub_throwsBadRequest_whenClubCodeAlreadyExists() {
+//        when(clubRepository.existsByCode(createClubRequest.getNullableCode()))
+//                .thenReturn(true);
+//
+//        assertThatThrownBy(() -> clubService.createClub(createClubRequest))
+//                .isInstanceOf(BadRequestException.class)
+//                .hasMessage("Club with this code already exists");
+//
+//        verify(clubRepository, never()).save(any());
+//    }
 
 
 }

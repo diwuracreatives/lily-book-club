@@ -9,12 +9,11 @@
          <h1>A World of Knowledge Awaits You 🌎 </h1>
          <p class="tagline"><span th:text="${greeting}"></span>, <span th:text="${firstname}"></span></p>
 
-         <p class="pointer">Welcome to Club <span th:text="${clubName}"></span>!  We’re here to help you explore, learn, and grow in your interests in technology.</p>
+         <p class="pointer">Welcome to Club <span th:text="${clubName}"></span>!  We’re here to help you explore, learn, and grow in your interests in <span th:text="${clubCategory}"></span>.</p>
          <p class="pointer">Every <span th:text="${readingDay}"></span> by 7 am, we’ll send you a new curated book recommendation email for your club.</p>
          <p class="pointer">Gear up to read, digest, learn, and discover something new every week!</p>
 
          <h3>Other things to know about your club:</h3>
-
          <ul>
             <li >Club Category: <span th:text="${clubCategory}"></span></li>
             <li >Club Code: <span th:text="${clubCode}"></span></li>

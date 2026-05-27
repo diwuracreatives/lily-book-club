@@ -52,7 +52,6 @@ public class BookController {
     }
 
     @PostMapping("/club")
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add book to club", description = "Add a book to an existing club")
     public Map<String, String>  addBookToClub(@RequestBody @Valid CreateClubBookRequest createClubBookRequest) {
@@ -61,7 +60,6 @@ public class BookController {
     }
 
     @DeleteMapping("/club")
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Remove book to club", description = "Remove and Delete a book from a club")
     public Map<String, String> removeBookFromClub(@RequestBody @Valid CreateClubBookRequest createClubBookRequest) {

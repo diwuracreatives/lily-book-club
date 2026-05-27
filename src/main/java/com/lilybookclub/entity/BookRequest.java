@@ -1,12 +1,12 @@
 package com.lilybookclub.entity;
 
-import com.lilybookclub.enums.BookApprovalStatus;
+import com.lilybookclub.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name = "book_requests", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@Table(name = "book_requests")
 @SQLRestriction("is_deleted = false")
 @Getter
 @Setter
@@ -24,7 +24,7 @@ public class BookRequest extends BaseEntity {
 
     @Column(name = "approval_status")
     @Enumerated(EnumType.STRING)
-    private BookApprovalStatus bookApprovalStatus;
+    private Status bookApprovalStatus;
 
     private String title;
 

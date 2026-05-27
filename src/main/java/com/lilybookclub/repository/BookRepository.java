@@ -28,8 +28,5 @@ public interface BookRepository extends JpaRepository<Book,Long> {
         GROUP BY b
         """)
     BookWithUpvoteCount findWithVoteCounts(@Param("book") Book book);
-
-
-
 }
 

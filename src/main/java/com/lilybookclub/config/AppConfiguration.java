@@ -1,7 +1,6 @@
 package com.lilybookclub.config;
 
 import com.lilybookclub.dto.request.user.SignUpRequest;
-import lombok.Data;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;

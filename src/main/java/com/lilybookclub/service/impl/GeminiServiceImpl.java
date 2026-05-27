@@ -39,4 +39,16 @@ public class GeminiServiceImpl implements GeminiService {
         return askGemini(query);
     }
 
+    public String verifyClubRequest(String desc){
+        String query = String.format(
+                "Verify if the club request made by a user is okay to be approved. Return ONLY 'true' or 'false' as a single word. Do not include any reasoning, introduction, or markdown formatting.\n\n" +
+                        "Criteria:\n" +
+                        "1. Check if the club description does not have any vulgar or inappropriate content in it.\n" +
+                        "2. Verify that the club description gives a well-grounded point of what the club is about and it is useful to be a club.\n\n" +
+                        "Club Description: %s\n\n" +
+                        "Response (true/false):",
+                desc
+        );
+        return askGemini(query);
+    }
 }

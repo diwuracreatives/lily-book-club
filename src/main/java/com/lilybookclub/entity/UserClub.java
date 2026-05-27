@@ -1,5 +1,6 @@
 package com.lilybookclub.entity;
 
+import com.lilybookclub.enums.ClubRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -12,7 +13,8 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserClub extends BaseEntity{
+public class UserClub extends BaseEntity {
+
         @ManyToOne
         @JoinColumn(name = "user_id")
         private User user;
@@ -20,6 +22,11 @@ public class UserClub extends BaseEntity{
         @ManyToOne
         @JoinColumn(name = "club_id")
         private Club club;
+
+        @Column(name = "club_role")
+        @Enumerated(EnumType.STRING)
+        private ClubRole clubRole;
+
 }
 
 

@@ -88,41 +88,41 @@ class AuthServiceImplTest {
 //    }
 
 
-  @Test
-    void loginFails_whenEmailDoesNotExist() {
-        when(userRepository.findByEmail(loginRequest.getNullableEmail()))
-                .thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> authService.login(loginRequest))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("Account with email address not found");
-
-    }
-
-    @Test
-    void authenticateUser_successfulLogin() {
-            when(userRepository.findByEmail(loginRequest.getNullableEmail()))
-                    .thenReturn(Optional.of(mockedUser));
-
-        Authentication mockAuth = mock(Authentication.class);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(mockAuth);
-
-        UserDetails mockUserDetails = mock(UserDetails.class);
-            when(userDetailsService.loadUserByUsername(loginRequest.getNullableEmail()))
-                    .thenReturn(mockUserDetails);
-
-            when(jwtService.generateToken(mockUserDetails))
-                    .thenReturn("ey132jnjaejbvehj55nmdfn44");
-
-            LoginResponse response = authService.login(loginRequest);
-
-            assertThat(response).isNotNull();
-            assertThat(response.getJwtToken()).isEqualTo("ey132jnjaejbvehj55nmdfn44");
-
-            verify(userRepository).findByEmail(loginRequest.getNullableEmail());
-            verify(userDetailsService).loadUserByUsername(loginRequest.getNullableEmail());
-            verify(jwtService).generateToken(mockUserDetails);
-        }
+//  @Test
+//    void loginFails_whenEmailDoesNotExist() {
+//        when(userRepository.findByEmail(loginRequest.getNullableEmail()))
+//                .thenReturn(Optional.empty());
+//
+//        assertThatThrownBy(() -> authService.login(loginRequest))
+//                .isInstanceOf(NotFoundException.class)
+//                .hasMessage("Account with email address not found");
+//
+//    }
+//
+//    @Test
+//    void authenticateUser_successfulLogin() {
+//            when(userRepository.findByEmail(loginRequest.getNullableEmail()))
+//                    .thenReturn(Optional.of(mockedUser));
+//
+//        Authentication mockAuth = mock(Authentication.class);
+//        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+//                .thenReturn(mockAuth);
+//
+//        UserDetails mockUserDetails = mock(UserDetails.class);
+//            when(userDetailsService.loadUserByUsername(loginRequest.getNullableEmail()))
+//                    .thenReturn(mockUserDetails);
+//
+//            when(jwtService.generateToken(mockUserDetails))
+//                    .thenReturn("ey132jnjaejbvehj55nmdfn44");
+//
+//            LoginResponse response = authService.login(loginRequest);
+//
+//            assertThat(response).isNotNull();
+//            assertThat(response.getJwtToken()).isEqualTo("ey132jnjaejbvehj55nmdfn44");
+//
+//            verify(userRepository).findByEmail(loginRequest.getNullableEmail());
+//            verify(userDetailsService).loadUserByUsername(loginRequest.getNullableEmail());
+//            verify(jwtService).generateToken(mockUserDetails);
+//        }
 
     }

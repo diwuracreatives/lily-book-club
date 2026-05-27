@@ -5,7 +5,8 @@ import com.lilybookclub.dto.request.book.CreateBookRequest;
 import com.lilybookclub.dto.response.book.BookModel;
 import com.lilybookclub.dto.response.book.BookWithUpvoteCount;
 import com.lilybookclub.entity.*;
-import com.lilybookclub.enums.BookApprovalStatus;
+import com.lilybookclub.enums.Role;
+import com.lilybookclub.enums.Status;
 import com.lilybookclub.enums.DayOfTheWeek;
 import com.lilybookclub.enums.Vote;
 import com.lilybookclub.exception.BadRequestException;
@@ -40,6 +41,7 @@ public class BookServiceImpl implements BookService {
       private final BookVoteRepository bookVoteRepository;
       private final UserDetailsServiceImpl userDetailsService;
       private final BookRequestRepository bookRequestRepository;
+      private final ClubRequestRepository clubRequestRepository;
       private final EmailService emailService;
       private final GeminiService geminiService;
       private final BookMapper bookMapper;
@@ -48,7 +50,7 @@ public class BookServiceImpl implements BookService {
     private Book checkIfBookExists(Long bookId){
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException("Book with this id not found"));
-     }
+    }
 
     private Club checkIfClubExists(String clubCode){
         return clubRepository.findByCode(clubCode)
@@ -56,7 +58,6 @@ public class BookServiceImpl implements BookService {
     }
 
     private User checkIfUserExistsInClub(Club club) {
-
         User user = userDetailsService.getLoggedInUser();
 
         if (!userClubRepository.existsByUserAndClub(user, club)) {
@@ -79,7 +80,6 @@ public class BookServiceImpl implements BookService {
      }
 
      private void createClubBook(Long bookId, String clubCode){
-
          ClubBook clubBook = ClubBook.builder()
                  .book(checkIfBookExists(bookId))
                  .club(checkIfClubExists(clubCode))
@@ -90,19 +90,32 @@ public class BookServiceImpl implements BookService {
     @Override
      public BookModel addBookByAdmin(CreateBookRequest createBookRequest){
            Book book = createBook(createBookRequest);
-
            return bookMapper.toResponse(book, null, null);
      }
 
-    @Override
+     private void checkIfUserIsClubAdmin(String clubCode){
+        User user = userDetailsService.getLoggedInUser();
+
+        if (user.getRole() == Role.USER) {
+            ClubRequest clubRequest = clubRequestRepository.findByCode(clubCode).orElseThrow(() -> new BadRequestException("User is not an admin of this club"));
+
+            if (!clubRequest.getUser().getId().equals(user.getId())){
+                throw new BadRequestException("User is not an admin of this club");
+            }
+        }
+     }
+
+     @Override
      public String addBookToClub(CreateClubBookRequest createClubBookRequest){
+        checkIfUserIsClubAdmin(createClubBookRequest.getClubCode());
         createClubBook(createClubBookRequest.getBookId(), createClubBookRequest.getNullableCode());
         return String.format("Book: %s successfully added to club: %s", createClubBookRequest.getBookId(), createClubBookRequest.getNullableCode());
      }
 
+
     @Override
      public String removeBookFromClub(CreateClubBookRequest removeClubBookRequest){
-
+          checkIfUserIsClubAdmin(removeClubBookRequest.getClubCode());
           Book book = checkIfBookExists(removeClubBookRequest.getBookId());
           Club club = checkIfClubExists(removeClubBookRequest.getNullableCode());
 
@@ -114,7 +127,7 @@ public class BookServiceImpl implements BookService {
           }
 
           return String.format("Book: %s successfully removed from club: %s", removeClubBookRequest.getBookId(), removeClubBookRequest.getNullableCode());
-     }
+    }
 
     @Override
      public BookModel upvoteBook(Long bookId){
@@ -154,7 +167,6 @@ public class BookServiceImpl implements BookService {
          Long downvoteCount = bookWithUpvoteCount.getDownvoteCount();
 
           return bookMapper.toResponse(book, upvoteCount, downvoteCount);
-
      }
 
      public Page<BookModel> getBooks(Pageable pageable){
@@ -182,7 +194,7 @@ public class BookServiceImpl implements BookService {
                  .link(recommendBookRequest.getNullableLink())
                  .imageUrl(recommendBookRequest.getNullableImageUrl())
                  .description(recommendBookRequest.getNullableDescription())
-                 .bookApprovalStatus(BookApprovalStatus.PENDING)
+                 .bookApprovalStatus(Status.PENDING)
                  .build();
 
          bookRequestRepository.save(bookRequest);
@@ -203,12 +215,13 @@ public class BookServiceImpl implements BookService {
                  .orElseThrow(() -> new NotFoundException("User Recommended Book with this id not found"));
      }
 
+
     @Override
      public String approveRecommendedBook(Long bookId){
 
          BookRequest bookRequest = getBookRequest(bookId);
 
-         if (bookRequest.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
+         if (bookRequest.getBookApprovalStatus().equals(Status.PENDING)) {
 
              CreateBookRequest createBookRequest = new CreateBookRequest();
              createBookRequest.setTitle(bookRequest.getTitle());
@@ -220,7 +233,7 @@ public class BookServiceImpl implements BookService {
              Book book = createBook(createBookRequest);
              createClubBook(book.getId(), bookRequest.getClub().getCode());
 
-             bookRequest.setBookApprovalStatus(BookApprovalStatus.APPROVED);
+             bookRequest.setBookApprovalStatus(Status.APPROVED);
              bookRequestRepository.save(bookRequest);
 
              Map<String, Object> params = new HashMap<>();
@@ -242,8 +255,8 @@ public class BookServiceImpl implements BookService {
 
         BookRequest bookRequest = getBookRequest(bookId);
 
-         if (bookRequest.getBookApprovalStatus().equals(BookApprovalStatus.PENDING)) {
-             bookRequest.setBookApprovalStatus(BookApprovalStatus.REJECTED);
+         if (bookRequest.getBookApprovalStatus().equals(Status.PENDING)) {
+             bookRequest.setBookApprovalStatus(Status.REJECTED);
              bookRequestRepository.save(bookRequest);
 
              Map<String, Object> params = new HashMap<>();
