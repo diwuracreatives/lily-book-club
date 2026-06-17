@@ -1,18 +1,20 @@
 package com.lilybookclub.entity;
 
+import com.lilybookclub.enums.ClubRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name = "user_club", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@Table(name = "user_clubs", uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "club_id"}) })
+@SQLRestriction("is_deleted = false")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserClub extends BaseEntity{
+public class UserClub extends BaseEntity {
+
         @ManyToOne
         @JoinColumn(name = "user_id")
         private User user;
@@ -20,6 +22,11 @@ public class UserClub extends BaseEntity{
         @ManyToOne
         @JoinColumn(name = "club_id")
         private Club club;
+
+        @Column(name = "club_role")
+        @Enumerated(EnumType.STRING)
+        private ClubRole clubRole;
+
 }
 
 

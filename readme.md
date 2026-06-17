@@ -32,7 +32,7 @@ git clone https://github.com/diwuracreatives/lily-book-club.git
 cd lily-book-club
 ```
 1. **Configure environment variables**
-Edit Application.properties file
+   Edit Application.properties file
 
 2. **Build and Run the App**
 ```bash

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mail/layout}">
+<body>
+
+<div layout:fragment="content">
+
+    <section class="main-content">
+
+        <h1>Your Book Suggestion has been Rejected</h1>
+
+        <p class="tagline"><span th:text="${greeting}"></span>, <span th:text="${firstname}"></span></p>
+
+        <p class="pointer">Your Recommended Book <span th:text="${bookTitle}"></span>  was not
+            approved for club <span th:text="${clubName}"></span> this time.
+            After careful review our team decided it isn’t the right fit for your club at this time </p>
+
+        <h3>Possible Reasons for Rejection:</h3>
+
+        <ul>
+            <li>Incorrect or incomplete book details were submitted.</li>
+            <li>The book does not fit your club’s category or description.</li>
+            <li>A similar or same version of this book has already been recommended for your club.</li>
+        </ul>
+
+        <p class="pointer" style="margin-top: 40px">We truly value your effort and encourage you to keep sharing book suggestions and always know that your input helps make the reading experience better for your club.</p>
+
+    </section>
+</div>
+
+</body>
+</html>
